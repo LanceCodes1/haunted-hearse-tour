@@ -100,3 +100,18 @@ Log two checks I ran in the terminal (no code changes):
 - `git log -S "sk-ant" --oneline` printed nothing, so no commit ever contained the key.
 **Commit:**
 **Mistake caught:** Yesterday's session left uncommitted work from Claude Code, which was caught afterward; these checks confirmed the key never reached git history.
+
+### Thu Oct 22 — Step 2: Wikidata route for Bela Lugosi
+**Tool:** Claude Code (plan mode, then edit)
+**Prompt:**
+```
+Read CLAUDE.md first. Goal: one back-end route that calls Wikidata for
+Bela Lugosi and returns his burial place, coordinates, and birth/death
+dates as JSON. Plan only. Wait for my approval.
+```
+**Why:** Get real burial facts from Wikidata first, since the AI narration and map pin will be built on them.
+**Result:**
+- New `lib/wikidata.ts` (one SPARQL query, 8s timeout, 429 message, User-Agent) and `app/api/legend/route.ts`.
+- `/api/legend` returns Lugosi: 1882-10-20 to 1956-08-16, Holy Cross Cemetery, lat 33.991649 / lon -118.387096.
+**Commit:**
+**Mistake caught:** Wikidata gives coordinates as `Point(lon lat)` (longitude first); the code swaps them so the pin won't land in the wrong place.
