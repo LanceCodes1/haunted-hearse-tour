@@ -115,3 +115,20 @@ dates as JSON. Plan only. Wait for my approval.
 - `/api/legend` returns Lugosi: 1882-10-20 to 1956-08-16, Holy Cross Cemetery, lat 33.991649 / lon -118.387096.
 **Commit:**
 **Mistake caught:** Wikidata gives coordinates as `Point(lon lat)` (longitude first); the code swaps them so the pin won't land in the wrong place.
+
+### Thu Oct 22 — Step 2b: Move and rename image assets
+**Tool:** Claude Code
+**Prompt:**
+```
+Check where my images are. Make sure they're all in public/images/ and
+rename them with git mv to: hearse.png, tombstone-frame.png, map-pin.png,
+background.png, billboard.png, header-overlay.svg. Leave Next's default
+SVGs (file, globe, next, vercel, window) in public/. Show me the list
+before and after. Then append a log entry.
+```
+**Why:** Short names with no spaces are easier to use in code; one folder keeps my own assets apart from Next's defaults.
+**Result:**
+- 6 files moved into `public/images/` with `git mv`, so git shows them as renames and keeps their history.
+- Next's 5 default SVGs stay in `public/`; no code referenced the old names, so nothing else changed.
+**Commit:**
+**Mistake caught:**
