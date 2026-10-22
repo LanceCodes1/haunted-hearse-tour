@@ -196,3 +196,73 @@ build it
 - `/api/narrate` returned Lugosi facts + `narration: {title, text}`; terminal logged `tokens in=331 out=101 · est $0.000084/call · $0.084 per 1,000 calls`.
 **Commit:**
 **Mistake caught:** With the placeholder prompt, the AI added "Culver City, California", which isn't in the Wikidata facts. My system prompt must forbid adding anything not given.
+
+### Thu Oct 22 — Step 3b: Add my narrator system prompt
+**Tool:** Claude HQ chat drafted, I edited; Claude Code pasted it in
+**Prompt:**
+```
+Replace the placeholder in lib/narratorPrompt.ts with my system prompt
+below. If the FORMAT section conflicts with how the route checks the
+title/text shape, tell me before changing anything. Append a log entry
+(Tool: Claude HQ chat drafted, I edited).
+```
+(Followed by my full system prompt, now in `lib/narratorPrompt.ts`.)
+**Why:** Give the tour guide a voice (Mortimer Graves) and rules that keep it to Wikidata facts, ending with a fixed sign-off.
+**Result:**
+- Placeholder replaced word for word; no code logic changed.
+- No FORMAT conflict: 3–7 word title and 60–80 word text fit the route's 80-char / 1,200-char checks and the 400-token cap.
+**Commit:**
+**Mistake caught:** Prompt now forbids adding a city/state/country, fixing the "Culver City, California" leak from Step 3.
+
+### Thu Oct 22 — Step 3c: Fictional example in narrator prompt
+**Tool:** Claude Code
+**Prompt:**
+```
+In lib/narratorPrompt.ts, replace the EXAMPLE with a fictional legend so
+the model can't copy it for a real person. Use: facts: "Lady Ravenna
+Thorne, born 1901-03-13, died 1949-10-31, buried at Blackthorn Abbey."
+Write a new title and text in the same style and format. Change nothing
+else. Append a log entry: mistake caught, the model copied the Lugosi
+example verbatim.
+```
+**Why:** An example about a real legend can be copied word for word; a fictional one only teaches the style.
+**Result:**
+- EXAMPLE now uses Lady Ravenna Thorne: title "The Raven Queen Takes Her Rest", 65-word text ending "Keep your hands inside the hearse."
+- Rest of the prompt and all route code unchanged.
+**Commit:**
+**Mistake caught:** The model copied the Lugosi example verbatim instead of writing its own narration.
+
+### Thu Oct 22 — Step 3d: Famous-work exception, cost check, Parked list
+**Tool:** Claude Code
+**Prompt:**
+```
+Add one line to CLAUDE.md under Project facts: "Exception: the narrator
+may mention a legend's most famous work in general terms. All burial,
+date, and place facts still come only from Wikidata. Notable-work field
+from Wikidata is parked for W7." Append a log entry that records: the
+fictional example fixed the verbatim copy; cost ~885-910 tokens in,
+~145-214 out, ~$0.0002/call, ~$0.19 per 1,000 calls. Add to Parked:
+narration runs ~86 words; filler "record books go quiet" line.
+```
+Follow-up: "New parked.md at the repo root with all the earlier items, EXCEPT ?id= param and the card UI. Those are next up, not parked. Add a one-line header: "Ideas and fixes saved for later. Not in this week's build.""
+**Why:** Write down the one allowed exception to "Wikidata only", record real cost numbers, and keep later ideas out of the code.
+**Result:**
+- The fictional example fixed the verbatim copy; cost per call is ~885–910 tokens in, ~145–214 out, ~$0.0002/call, ~$0.19 per 1,000 calls.
+- CLAUDE.md now has the famous-work exception; new `parked.md` lists 8 items (?id= and card UI left out as next up).
+**Commit:**
+**Mistake caught:**
+
+### Thu Oct 22 — Step 3e: Search-box checks moved out of Parked
+**Tool:** Claude Code
+**Prompt:**
+```
+Remove "search-box input checks" from parked.md. It's must-ship, next up
+with ?id= and the card UI. Change nothing else.
+```
+Follow-up: "Yes, add a short new log entry: removed search-box checks from parked.md (must-ship)."
+**Why:** Search-box checks (empty, too long, gibberish) are must-ship, not a later idea.
+**Result:**
+- Removed the search-box checks line from `parked.md`; it now lists 7 items (Step 3d said 8).
+- Next up: `?id=` param, search-box checks, tour stop card UI.
+**Commit:**
+**Mistake caught:** Search-box checks were parked by mistake; they're required guardrails.
