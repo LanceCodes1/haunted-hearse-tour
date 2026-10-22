@@ -83,3 +83,20 @@ has coordinates (yes/no). I'll spot-check before we save them.
 - Wikidata returned a 429 mid-lookup, so the app needs that guard too.
 **Commit:**
 **Mistake caught:** Plan's Lugosi ID (Q102054) was from AI memory and wrong; real ID is Q34529 (Holy Cross Cemetery).
+
+### Thu Oct 22 — Step 1: API key safety check (no code changes)
+**Tool:** Terminal (git) + Claude Code (logging only)
+**Prompt:**
+```
+Log two checks I ran in the terminal (no code changes):
+1. git check-ignore .env.local → printed .env.local, key is ignored
+2. git log -S "sk-ant" --oneline → no output, key never committed.
+   I ran this after yesterday's messy session where you did uncommitted
+   work and caught it yourself. Log that as "Mistake caught."
+```
+**Why:** Prove the API key is git-ignored and was never committed before any step uses it.
+**Result:**
+- `git check-ignore .env.local` printed `.env.local`, so git ignores the key file.
+- `git log -S "sk-ant" --oneline` printed nothing, so no commit ever contained the key.
+**Commit:**
+**Mistake caught:** Yesterday's session left uncommitted work from Claude Code, which was caught afterward; these checks confirmed the key never reached git history.
