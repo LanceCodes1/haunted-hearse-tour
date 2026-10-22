@@ -1,7 +1,7 @@
 // Back end only: fetches burial facts from Wikidata, our ONLY source of facts.
 
 const SPARQL_URL = "https://query.wikidata.org/sparql";
-const USER_AGENT = "HauntedHearseTour/0.1 (student class demo)"; // Wikimedia asks every caller to identify itself
+const USER_AGENT = "HauntedHearseTour/0.1 (https://github.com/LanceCodes1/haunted-hearse-tour)"; // Wikimedia asks every caller to identify itself
 const TIMEOUT_MS = 8000; // give up on Wikidata after 8 seconds
 
 export const NO_BURIAL_MESSAGE =

@@ -132,3 +132,33 @@ before and after. Then append a log entry.
 - Next's 5 default SVGs stay in `public/`; no code referenced the old names, so nothing else changed.
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 2c: Create GitHub repo and push
+**Tool:** Terminal (gh, git) + Claude Code (logging only)
+**Prompt:**
+```
+Append a log entry: created public repo LanceCodes1/haunted-hearse-tour
+with gh, pushed main over SSH, and I verified on GitHub that .env.local
+is not in the repo.
+```
+**Why:** Put the project on GitHub so it's backed up and ready to share for the demo.
+**Result:**
+- Created public repo `LanceCodes1/haunted-hearse-tour` with `gh repo create`; pushed `main` over SSH, tracking `origin/main`.
+- Checked on GitHub that `.env.local` is not in the repo.
+**Commit:**
+**Mistake caught:**
+
+### Thu Oct 22 — Step 2d: Add repo URL to Wikidata User-Agent
+**Tool:** Claude Code
+**Prompt:**
+```
+Update the Wikidata User-Agent to:
+HauntedHearseTour/0.1 (https://github.com/LanceCodes1/haunted-hearse-tour)
+Change only that one line. Then append a log entry.
+```
+**Why:** Wikimedia asks callers for a way to contact them; the public repo URL gives one without sharing my email.
+**Result:**
+- One line changed in `lib/wikidata.ts`: `USER_AGENT` now includes the repo URL.
+- Nothing else in the code changed.
+**Commit:**
+**Mistake caught:**
