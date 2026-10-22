@@ -182,4 +182,17 @@ Append a log entry when the plan is approved.
 - Plan approved; I chose narration shape = title + paragraph (structured JSON with `title` and `text`).
 - Guards: 1,000-char input cap, `max_tokens` 400, 10s timeout with retries off, a "no tombstones for the living" check, a shape check, and a token/cost log at $0.10/$0.50 per 1M tokens.
 **Commit:**
-**Mistake caught:** SDK docs show Haiku 5.5 thinks by default (eats the output cap) and retries twice (a 10s timeout could become 30s); the plan turns both off.
+**Mistake caught:** SDK docs show Haiku 5.5 thinks by default (eats the output cap) and retries twice (a 10s timeout could become 30s); the plan turns both off.  
+
+### Thu Oct 22 — Step 3: Build AI narration route
+**Tool:** Claude Code
+**Prompt:**
+```
+build it
+```
+**Why:** Build the approved Step 3 plan: facts from Wikidata, then a campy narration from Claude, with every guard in place.
+**Result:**
+- Installed `@anthropic-ai/sdk`; new `app/api/narrate/route.ts` and `lib/narratorPrompt.ts` (placeholder prompt, my text goes here).
+- `/api/narrate` returned Lugosi facts + `narration: {title, text}`; terminal logged `tokens in=331 out=101 · est $0.000084/call · $0.084 per 1,000 calls`.
+**Commit:**
+**Mistake caught:** With the placeholder prompt, the AI added "Culver City, California", which isn't in the Wikidata facts. My system prompt must forbid adding anything not given.
