@@ -266,3 +266,21 @@ Follow-up: "Yes, add a short new log entry: removed search-box checks from parke
 - Next up: `?id=` param, search-box checks, tour stop card UI.
 **Commit:**
 **Mistake caught:** Search-box checks were parked by mistake; they're required guardrails.
+
+### Thu Oct 22 — Step 3f: AI-down test + keep coordinates away from the AI
+**Tool:** Terminal (AI-down test) + Claude Code (coordinates fix)
+**Prompt:**
+```
+In the narrate route, stop sending coordinates to the AI. The narrator
+gets only name, born, died, and burial place. The JSON response still
+includes coordinates for the map. Change nothing else. Then append a log
+entry for the AI-down test (renamed key, user saw facts + narration null
++ "Our tour guide lost their voice," key restored, narration returned)
+and this coordinates fix.
+```
+**Why:** Prove the fallback works when the AI is down, and send the AI only what it needs to narrate.
+**Result:**
+- AI-down test passed: with the key renamed, `/api/narrate` showed the facts + `narration: null` + "Our tour guide lost their voice"; with the key restored, narration came back.
+- The AI now gets only name, born, died, and burial place; the JSON response still includes coordinates for the map.
+**Commit:**
+**Mistake caught:** The route was sending the AI every field (coordinates, ID, source), which it didn't need.

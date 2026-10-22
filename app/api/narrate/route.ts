@@ -62,7 +62,8 @@ export async function GET() {
   }
 
   // 3. Input cap: the AI sees only these facts, and only if they're short
-  const factsForAI = JSON.stringify(facts);
+  // Coordinates stay out of the AI's view; they're only for the map
+  const factsForAI = JSON.stringify({ name: facts.name, born: facts.born, died: facts.died, burialPlace: facts.burialPlace });
   if (factsForAI.length > MAX_INPUT_CHARS) {
     console.error(`[api/narrate] Facts too long for AI (${factsForAI.length} chars), skipping narration`);
     return Response.json({ ...facts, narration: null, narrationError: "Our tour guide is speechless. Here are the facts for now." });
