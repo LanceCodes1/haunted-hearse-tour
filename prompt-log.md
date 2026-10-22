@@ -162,3 +162,24 @@ Change only that one line. Then append a log entry.
 - Nothing else in the code changed.
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 3 plan: AI narration route (plan mode)
+**Tool:** Claude Code (plan mode)
+**Prompt:**
+```
+Plan the AI narration route. Plan only, no code yet.
+- New route app/api/narrate/route.ts, Lugosi only for now (Q34529).
+- Server re-fetches facts with my existing lib/wikidata.ts. The AI gets ONLY those facts.
+- Anthropic SDK, model claude-haiku-5-5, key from ANTHROPIC_API_KEY. Read the current SDK docs first.
+- Put the system prompt in its own file as a constant, but leave it as a placeholder. I'm writing it myself.
+- Guards: max output tokens, 10-second timeout, try/catch, friendly 429 message, check the output exists and matches the shape. Log token usage (input/output) to the terminal.
+- Fallback: if the AI fails, still return the Wikidata facts with narration: null.
+- Ask me what shape the narration should be before deciding.
+Append a log entry when the plan is approved.
+```
+**Why:** Plan the AI step with every guardrail before any code or API key is used.
+**Result:**
+- Plan approved; I chose narration shape = title + paragraph (structured JSON with `title` and `text`).
+- Guards: 1,000-char input cap, `max_tokens` 400, 10s timeout with retries off, a "no tombstones for the living" check, a shape check, and a token/cost log at $0.10/$0.50 per 1M tokens.
+**Commit:**
+**Mistake caught:** SDK docs show Haiku 5.5 thinks by default (eats the output cap) and retries twice (a 10s timeout could become 30s); the plan turns both off.
