@@ -7,3 +7,79 @@
 **Result:** Wikidata = riskiest piece (name matching, coordinates two hops away, living-person guard depends on it). CRUD + Prisma/Neon parked until core works. Fallback demo must keep the search box (bad-input guard surface).
 **Commit:**
 **Mistake caught:** AI gave placeholder paths (`~/path/to/your/projects`) that got pasted literally. Terminal errors (`cd: too many arguments`, `mv: No such file`) caught it; no damage.
+
+### Wed Oct 21 — Phase 1 plan (plan mode)
+**Tool:** Claude Code (plan mode)
+**Prompt:**
+```
+Plan mode. Don't write any code yet.
+
+Read CLAUDE.md and AGENTS.md first.
+
+Project: Haunted Hearse Tour. User clicks or searches a horror legend's
+name → a back-end route pulls their burial facts from Wikidata → an AI
+tour guide writes a short campy narration from ONLY those facts → a pin
+drops on a map.
+
+Phase 1 (must ship, checkpoint Thursday 3 PM):
+1. Program AI key in .env.local; confirm it's git-ignored.
+2. Back-end route: query Wikidata for one name (Bela Lugosi) and return
+   burial place, cemetery coordinates, birth and death dates.
+3. Back-end AI route: system prompt in code, input length cap, max
+   output tokens, token usage logged.
+4. Guardrails:
+   - Bad input: empty, too long, gibberish, or a living person (no death
+     date in Wikidata) rejected before any AI call.
+   - Bad output: check the narration exists and matches the expected shape.
+   - Failure: try/catch, timeout on BOTH Wikidata and AI calls, a friendly
+     message on 429.
+   - Fallback: if AI is down, still show Wikidata facts + map pin.
+5. UI: a plain list of 20 names + a search box, a tour stop card labeled
+   "Facts from Wikidata · Narration by AI".
+6. Map pin with Leaflet + OpenStreetMap.
+
+Phase 2 (only if Phase 1 is done by the checkpoint): save a tour route
+with CRUD using Prisma + Neon.
+Phase 3 (last): animated marquee + grindhouse styling.
+
+Give me:
+- Numbered steps small enough that I can test and commit each one
+- Which files each step touches
+- What "done" looks like for each step
+- The riskiest step and how we'll test it
+- Anything in this plan that won't work, or that you'd change
+
+Ask me questions before assuming anything.
+```
+**Why:** Break Phase 1 into small steps I can test and commit, before any code.
+**Result:**
+- 7-step plan approved; decisions: Claude, my own 20 names saved by Wikidata ID, AI route takes an ID only.
+- Riskiest part: Wikidata (name matching, cremated stars with no pin).
+- `.env.local` confirmed git-ignored by the `.env*` rule.
+**Commit:**
+**Mistake caught:** "Gibberish" had no concrete rule; now defined as failing the character check or no human match on Wikidata.
+
+### Wed Oct 21 — Step 1b: Roster check (live Wikidata lookup)
+**Tool:** Claude Code
+**Prompt:**
+```
+Use this exact roster:
+LA Legends: Bela Lugosi, Peter Lorre, Maila Nurmi, Lon Chaney (Sr., 1883-1930),
+James Whale, Tod Browning, Carl Laemmle, Tor Johnson, Glenn Strange, Vincent Price
+Beyond LA: Edgar Allan Poe, Mary Shelley, H.P. Lovecraft, Washington Irving,
+Harry Houdini, Rod Serling, Anne Rice, Bram Stoker, Boris Karloff, Claude Rains
+
+Keep Vincent Price, Boris Karloff, and Bram Stoker even with no grave or
+coordinates. They're planned demo cases for the "no burial site" fallback.
+
+Look up every Wikidata ID live, not from memory. Add a step in the plan
+that shows me a table: name, ID, birth-death years, burial place,
+has coordinates (yes/no). I'll spot-check before we save them.
+```
+**Why:** Get real Wikidata IDs for all 20 names before any code depends on them.
+**Result:**
+- All 20 IDs found live; table shown in chat, nothing saved to the repo yet.
+- Price and Karloff have no burial place; Stoker has coordinates (crematorium); Serling's "burial place" is New York State.
+- Wikidata returned a 429 mid-lookup, so the app needs that guard too.
+**Commit:**
+**Mistake caught:** Plan's Lugosi ID (Q102054) was from AI memory and wrong; real ID is Q34529 (Holy Cross Cemetery).
