@@ -284,3 +284,38 @@ and this coordinates fix.
 - The AI now gets only name, born, died, and burial place; the JSON response still includes coordinates for the map.
 **Commit:**
 **Mistake caught:** The route was sending the AI every field (coordinates, ID, source), which it didn't need.
+
+### Thu Oct 22 — Step 4 plan: ?id= for both routes + roster file (plan mode)
+**Tool:** Claude Code (plan mode)
+**Prompt:**
+```
+Plan only: add ?id= to /api/legend and /api/narrate so they work for any
+of the 20 roster names. Save the roster (name, Wikidata ID, LA Legends or
+Beyond LA) in one file, using the verified IDs from earlier. Include
+Cassandra Peterson (Elvira) as a test-only living person; look up her ID
+live. Tests: Lugosi (normal), Vincent Price (no burial site), Rod Serling
+(state, not a cemetery), Elvira (living, rejected before any AI call), and
+a bad ID like "abc" (rejected). Append a log entry when approved.
+```
+**Why:** Make both routes work for the whole roster, with one file as the only list of allowed IDs, before building the search box and card.
+**Result:**
+- Plan approved: new `lib/roster.ts` with 20 legends + Elvira (Q253942, test only); one shared helper checks roster → Wikidata → living → region fix.
+- I chose: Serling keeps "New York" as his burial place but gets no map pin and an honest "only records the state" message.
+**Commit:**
+**Mistake caught:** The earlier verified ID table only existed in chat, never in the repo, so all 21 IDs had to be re-checked live. They matched the earlier notes (Price/Karloff no burial, Stoker crematorium, Serling = New York).
+
+### Thu Oct 22 — Step 4 plan follow-up: spot-check + parked burial check
+**Tool:** wikidata.org (spot-check) + Claude Code (parked.md, log)
+**Prompt:**
+```
+Add to parked.md: general check that the burial place is a cemetery,
+crematorium, or church (not a region), so search-box names are covered
+too. Today's Serling fix is roster-only. Also append to the log: I
+spot-checked Lon Chaney Sr. (Q312656) on wikidata.org, died 1930.
+```
+**Why:** Confirm the trickiest roster ID by hand, and note that the Serling fix won't cover names typed into the search box.
+**Result:**
+- Spot-checked Lon Chaney Sr. (Q312656) on wikidata.org: died 1930, so it's the father, not Lon Chaney Jr.
+- Added a general "burial place is a cemetery, crematorium, or church" check to `parked.md`.
+**Commit:**
+**Mistake caught:**
