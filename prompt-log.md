@@ -319,3 +319,16 @@ spot-checked Lon Chaney Sr. (Q312656) on wikidata.org, died 1930.
 - Added a general "burial place is a cemetery, crematorium, or church" check to `parked.md`.
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 4: Build ?id= + roster
+**Tool:** Claude Code
+**Prompt:**
+```
+build it
+```
+**Why:** Build the approved Step 4 plan so both routes work for any roster legend and reject everything else.
+**Result:**
+- New `lib/roster.ts` (20 legends + Elvira test-only) with one shared `getRosterFacts`; both routes now take `?id=`.
+- All tests passed: Lugosi normal; Price no burial + fallback message; Serling "New York" with no pin; Elvira, `abc`, and no ID → 400 with no AI call (only 3 token lines logged: in ~853–867, out ~175–208, ~$0.00017–0.00019/call).
+**Commit:**
+**Mistake caught:** My first test run used a loop variable named `path`, which in zsh wipes out the command search path (`curl: command not found`); renamed it and reran. Also, the Lugosi narration added "the living still leave flowers", a detail not in the facts.

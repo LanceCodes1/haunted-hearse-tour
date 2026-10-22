@@ -1,10 +1,10 @@
-// Back end only: GET /api/narrate returns Bela Lugosi's Wikidata facts plus an AI narration.
+// Back end only: GET /api/narrate?id=Q34529 returns a roster legend's Wikidata facts plus an AI narration.
 import Anthropic from "@anthropic-ai/sdk";
-import { connection } from "next/server";
-import { getBurialFacts, WikidataError } from "@/lib/wikidata";
+import { connection, type NextRequest } from "next/server";
+import { WikidataError } from "@/lib/wikidata";
+import { getRosterFacts } from "@/lib/roster";
 import { NARRATOR_SYSTEM_PROMPT } from "@/lib/narratorPrompt";
 
-const BELA_LUGOSI_ID = "Q34529"; // checked live on Wikidata (Holy Cross Cemetery)
 const MODEL = "claude-haiku-5-5";
 const MAX_INPUT_CHARS = 1000; // cost guard: never send more than this to the AI
 const MAX_OUTPUT_TOKENS = 400; // cost guard: hard cap on how much the AI can write
@@ -41,27 +41,22 @@ function parseNarration(raw: string): Narration | null {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   await connection(); // run on every request, never prerendered at build time
 
-  // 1. Facts first, from Wikidata only. If this fails, the AI is never called.
+  // 1. Facts first: roster check, Wikidata, and living-person check. If any fails, the AI is never called.
   let facts;
   try {
-    facts = await getBurialFacts(BELA_LUGOSI_ID);
+    facts = await getRosterFacts(request.nextUrl.searchParams.get("id"));
   } catch (err) {
-    console.error("[api/narrate] Wikidata lookup failed:", err); // raw error goes to the terminal only
+    console.error("[api/narrate] Lookup failed:", err); // raw error goes to the terminal only
     if (err instanceof WikidataError) {
       return Response.json({ error: err.userMessage }, { status: err.status });
     }
     return Response.json({ error: "Something went wrong on our side. Try again soon." }, { status: 500 });
   }
 
-  // 2. Living-person guard: no death date means no tour stop
-  if (!facts.died) {
-    return Response.json({ error: "No tombstones for the living." }, { status: 400 });
-  }
-
-  // 3. Input cap: the AI sees only these facts, and only if they're short
+  // 2. Input cap: the AI sees only these facts, and only if they're short
   // Coordinates stay out of the AI's view; they're only for the map
   const factsForAI = JSON.stringify({ name: facts.name, born: facts.born, died: facts.died, burialPlace: facts.burialPlace });
   if (factsForAI.length > MAX_INPUT_CHARS) {
@@ -69,7 +64,7 @@ export async function GET() {
     return Response.json({ ...facts, narration: null, narrationError: "Our tour guide is speechless. Here are the facts for now." });
   }
 
-  // 4. Ask the AI for a narration; any failure falls back to facts + narration: null
+  // 3. Ask the AI for a narration; any failure falls back to facts + narration: null
   try {
     const client = new Anthropic(); // reads ANTHROPIC_API_KEY from .env.local, on the server only
     const response = await client.messages.create(
