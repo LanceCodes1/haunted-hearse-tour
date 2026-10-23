@@ -10,3 +10,4 @@ Ideas and fixes saved for later. Not in this week's build.
 - **`npm audit` warnings:** 5 high-severity, all in ESLint tooling (`eslint-config-next` → `fast-glob` → `micromatch` → `braces`). Not the SDK. Don't run `npm audit fix --force`, which can break things.
 - **Copy the plan into the repo:** the full Step 3 plan lives in `~/.claude/plans/`, outside git. Copy it to `docs/` for the demo.
 - **General burial-place check:** confirm on Wikidata that the burial place is a cemetery, crematorium, or church (not a region), so search-box names are covered too. Today's Serling fix is roster-only.
+- **Narrator example:** rewrite the EXAMPLE to name one title, skip filler, and avoid present-day claims (W2 lesson: the example drives behavior more than rules).

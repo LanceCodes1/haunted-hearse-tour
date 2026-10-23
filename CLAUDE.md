@@ -18,7 +18,7 @@
 - Stack: Next.js 16 (App Router), TypeScript, Tailwind. No database unless I start Phase 2.
 - Wikidata is the ONLY source of facts (burial place, coordinates, dates).
   The AI writes narration from those facts and never invents facts.
-- Exception: the narrator may mention a legend's most famous work in general terms. All burial, date, and place facts still come only from Wikidata. Notable-work field from Wikidata is parked for W7.
+- Exception: the narrator may name one signature work by title. All burial, date, and place facts still come only from Wikidata. Notable-work field from Wikidata is parked for W7.
 - Every AI feature needs guards for: bad input, bad output, and failure/slowness
   (try/catch, timeout, friendly messages). Raw errors go to the log; users get plain language.
 

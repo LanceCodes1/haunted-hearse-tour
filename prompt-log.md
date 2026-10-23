@@ -351,3 +351,19 @@ narrations with word counts. Append a log entry.
 - Reruns: Lugosi 75 words, Price 79, Serling 77, all under 80; no grave-site or visitor details. ~899–913 tokens in, ~174–189 out, ~$0.00018/call.
 **Commit:**
 **Mistake caught:** Lugosi still got filler ("the record books tell us only that much") even though no fact was missing.
+
+### Thu Oct 22 — Step 4c: CLAUDE.md exception + parked example fix
+**Tool:** Claude Code
+**Prompt:**
+```
+Add to parked.md: narrator example should name one title, skip filler,
+and avoid present-day claims (W2 lesson: the example drives behavior more
+than rules). Update the CLAUDE.md exception line to "may name one
+signature work by title." Append a log entry.
+```
+**Why:** Keep CLAUDE.md in sync with the new prompt rule, and save the example rewrite for later.
+**Result:**
+- CLAUDE.md exception now reads "the narrator may name one signature work by title"; the rest of the line is unchanged.
+- Added the narrator-example rewrite to `parked.md`.
+**Commit:**
+**Mistake caught:**
