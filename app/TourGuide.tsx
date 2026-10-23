@@ -39,6 +39,7 @@ function formatDate(date?: string | null): string {
 }
 
 export default function TourGuide({ tour, living }: { tour: TourName[]; living: LivingName[] }) {
+  // Screen state: chosen legend, its card data, loading flag, search text, search message, and match buttons
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stop, setStop] = useState<TourStop | null>(null);
   const [loading, setLoading] = useState(false);
@@ -79,6 +80,7 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
     if ("open" in result) visit(result.open);
   }
 
+  // The main path: a click or search picks a legend → ask our server → show the card (or a friendly error)
   async function visit(id: string) {
     setMatches([]);
     setSelectedId(id);
@@ -94,6 +96,7 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
     }
   }
 
+  // The order the two roster lists appear in
   const groups: TourName["group"][] = ["LA Legends", "Beyond LA"];
 
   return (
@@ -198,6 +201,7 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
   );
 }
 
+// One tour stop: back button, tombstone, Wikidata facts (+ map), AI narration, and the honesty label
 function TourStopCard({ stop }: { stop: TourStop }) {
   return (
     <article className="mx-auto max-w-xl overflow-hidden rounded-2xl border border-rust/60 bg-tar/90 text-bone shadow-[0_0_40px_rgba(168,18,31,0.25)]">

@@ -16,21 +16,25 @@ const specialElite = Special_Elite({
   subsets: ["latin"],
 });
 
+// Readable body font for facts and narration
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+// Monospace font from the Next.js starter (available as font-mono)
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+// Browser tab title and search-engine description
 export const metadata: Metadata = {
   title: "Haunted Hearse Tour",
   description: "A campy tour of horror legends' resting places. Facts from Wikidata, narration by AI.",
 };
 
+// The page shell every route renders inside: loads all four fonts on <html>
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html

@@ -628,3 +628,37 @@ Append a short log entry.
 - "← Back to the tour entrance" on every card, and a clickable site title (new `app/SiteTitle.tsx`), both send one browser event that clears the card and scrolls to the top. Types, lint, and build pass.
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 9: Rewrite README
+**Tool:** Claude Code
+**Prompt:**
+```
+Rewrite README.md for Haunted Hearse Tour. Sections: what it is (hook:
+"Before Freddy, Jason, and Chucky…"), how it works (browser → my server →
+Wikidata → Claude → screen), stack, setup (npm install, .env.local with
+ANTHROPIC_API_KEY=your-key-here placeholder, npm run dev), guardrails
+(bad input, bad output, failure, cost cap), cost (~$0.0002/call), where
+AI was used (built with Claude Code; narration by Claude Haiku 5.5;
+taglines AI-drafted and cross-checked), credits (Wikidata, OpenStreetMap,
+Leaflet), and what's parked for W7. Plain language. Append a log entry.
+```
+**Why:** Replace the Create Next App starter README with one that explains the project for the demo and the class repo.
+**Result:**
+- README now covers all 9 sections: what it is, how it works, stack, setup, guardrails, cost, AI use, credits, and parked for W7; it links to `prompt-log.md` and `parked.md`.
+- Only a placeholder key (`your-key-here`) appears; no real key or secret.
+**Commit:**
+**Mistake caught:**
+
+### Thu Oct 22 — Step 9b: Fill in missing one-line comments
+**Tool:** Claude Code
+**Prompt:**
+```
+Yes, add those ~7 one-line comments. Comments only, no code changes.
+Append a short log entry.
+```
+**Why:** A read-only check flagged `app/layout.tsx` and four spots in `app/TourGuide.tsx` with no one-line comment for the demo.
+**Result:**
+- Added 8 one-line comments: 4 in `app/layout.tsx` (body font, mono font, tab title, page shell) and 4 in `app/TourGuide.tsx` (screen state, `visit()`, list order, `TourStopCard`).
+- Diff is comment lines only; types and lint pass.
+**Commit:**
+**Mistake caught:**
