@@ -390,3 +390,16 @@ Append a log entry when approved.
 - I chose tombstone image on top, text below (the stone's inner panel is too small for 80 words + facts, especially on phones).
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 5: Build tour UI
+**Tool:** Claude Code
+**Prompt:**
+```
+build it
+```
+**Why:** Build the approved Step 5 plan: the first real screen of the tour.
+**Result:**
+- `app/page.tsx` replaced with the tour; new `app/TourGuide.tsx` has the grouped roster buttons, the loading message, and the tour stop card (tombstone on top, facts and narration in separate labeled blocks, "Facts from Wikidata · Narration by AI" footer).
+- Checks: types + lint pass; home page renders 20 buttons in two groups, Elvira not listed; tab title is "Haunted Hearse Tour".
+**Commit:**
+**Mistake caught:**
