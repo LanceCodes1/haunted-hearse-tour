@@ -1,7 +1,8 @@
 "use client";
 // Front end: the clickable roster and the tour stop card. It only ever calls our own /api/narrate route.
 import Image from "next/image";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
+import { checkSearch, type LivingName } from "./searchCheck";
 
 export type TourName = { id: string; name: string; group: "LA Legends" | "Beyond LA" };
 
@@ -25,12 +26,29 @@ function formatDate(date?: string | null): string {
   return new Date(date).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long", day: "numeric" });
 }
 
-export default function TourGuide({ tour }: { tour: TourName[] }) {
+export default function TourGuide({ tour, living }: { tour: TourName[]; living: LivingName[] }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stop, setStop] = useState<TourStop | null>(null);
   const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState("");
+  const [searchMessage, setSearchMessage] = useState<string | null>(null);
+  const [matches, setMatches] = useState<TourName[]>([]);
+
+  // Search box: run every input check first; only a single clear match calls the API
+  function search(event: FormEvent) {
+    event.preventDefault();
+    const result = checkSearch(query, tour, living);
+    setSearchMessage("message" in result ? result.message : null);
+    setMatches("matches" in result ? result.matches : []);
+    if ("message" in result) {
+      setStop(null); // rejected search: clear the old card so only the message shows
+      setSelectedId(null);
+    }
+    if ("open" in result) visit(result.open);
+  }
 
   async function visit(id: string) {
+    setMatches([]);
     setSelectedId(id);
     setStop(null);
     setLoading(true); // buttons are disabled while loading, so only one AI call runs at a time
@@ -50,6 +68,42 @@ export default function TourGuide({ tour }: { tour: TourName[] }) {
     <div className="grid gap-8 md:grid-cols-[16rem_1fr]">
       {/* Roster list, grouped */}
       <nav className="flex flex-col gap-6">
+        {/* Search box: checks run in the browser before any API call */}
+        <form onSubmit={search} className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              disabled={loading}
+              placeholder="Search a legend…"
+              aria-label="Search a legend"
+              className="min-w-0 flex-1 rounded border border-zinc-400 bg-transparent px-2 py-1.5"
+            />
+            <button type="submit" disabled={loading} className="rounded bg-zinc-800 px-3 py-1.5 text-white disabled:opacity-60">
+              Search
+            </button>
+          </div>
+          {searchMessage && <p className="text-sm italic text-zinc-500">{searchMessage}</p>}
+          {matches.length > 0 && (
+            <div className="text-sm">
+              <p className="mb-1 text-zinc-500">A few legends match:</p>
+              <div className="flex flex-wrap gap-1">
+                {matches.map((legend) => (
+                  <button
+                    key={legend.id}
+                    type="button"
+                    onClick={() => visit(legend.id)}
+                    disabled={loading}
+                    className="rounded border border-zinc-400 px-2 py-0.5 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                  >
+                    {legend.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </form>
+
         {groups.map((group) => (
           <section key={group}>
             <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">{group}</h2>

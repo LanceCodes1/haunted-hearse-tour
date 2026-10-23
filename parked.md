@@ -11,3 +11,4 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Copy the plan into the repo:** the full Step 3 plan lives in `~/.claude/plans/`, outside git. Copy it to `docs/` for the demo.
 - **General burial-place check:** confirm on Wikidata that the burial place is a cemetery, crematorium, or church (not a region), so search-box names are covered too. Today's Serling fix is roster-only.
 - **Narrator example:** rewrite the EXAMPLE to name one title, skip filler, and avoid present-day claims (W2 lesson: the example drives behavior more than rules).
+- **Search any legend beyond the 20 (W7):** needs a Wikidata name search, handling the wrong person with the same name, and the general cemetery check above.

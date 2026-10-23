@@ -424,3 +424,33 @@ Append a log entry when approved.
 - I chose: 2+ matches show clickable name buttons; no API call until one is picked.
 **Commit:**
 **Mistake caught:** The plan's test table said "lo" matches Lorre, Chaney, and Lovecraft, but "Karloff" contains "lo" too, so 4 buttons should show.
+
+### Thu Oct 22 — Step 6: Build search box
+**Tool:** Claude Code
+**Prompt:**
+```
+build it
+```
+**Why:** Build the approved Step 6 plan: the last must-ship piece.
+**Result:**
+- New `app/searchCheck.ts` + a search form in `app/TourGuide.tsx`; `app/page.tsx` passes a small `living` list. No route changes.
+- Ran 13 inputs through `checkSearch`: empty/spaces, 61 chars, `12345`, `!!!`, `elvira`, `Cassandra Peterson`, `peterson`, and `dracula` all get the right message; `lo` shows 4 buttons (incl. Karloff); `peter`, `LUGOSI`, and `hp lovecraft` open one card.
+**Commit:**
+**Mistake caught:** The planned order (living check before matching) would have rejected "peter" and even "a" as living, because "Cassandra Peterson" contains them. Now "living" only applies when no tour legend matches.
+
+### Thu Oct 22 — Step 6b: Search box tests + clear card on rejected search
+**Tool:** Browser (search tests) + Claude Code (fix)
+**Prompt:**
+```
+When a search is rejected (empty, too long, no letters, living, not on the
+tour), clear the current card so only the message shows. Change nothing
+else. Add to parked.md: open the search to any legend beyond the 20 (W7):
+needs Wikidata name search, wrong-person handling, and the general
+cemetery check. Append a log entry for the search box tests and this fix.
+```
+**Why:** After a rejected search, the previous legend's card stayed on screen next to the error message, which was confusing.
+**Result:**
+- Search box tests in the browser: the rejection messages and matches worked, but a rejected search left the old card showing.
+- Fix: a rejected search now clears the card and the highlighted name; matches and single opens are unchanged. Added "search any legend beyond the 20 (W7)" to `parked.md`.
+**Commit:**
+**Mistake caught:** A rejected search kept the previous card on screen.
