@@ -367,3 +367,26 @@ signature work by title." Append a log entry.
 - Added the narrator-example rewrite to `parked.md`.
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 5 plan: Tour UI, roster list + tour stop card (plan mode)
+**Tool:** Claude Code (plan mode)
+**Prompt:**
+```
+Plan only: replace the Next.js starter page with the tour UI.
+- A plain list of the 20 roster names, grouped LA Legends / Beyond LA.
+- Click a name → call /api/narrate?id= → show a tour stop card: name,
+  born-died, burial place, the narration title + text, and the label
+  "Facts from Wikidata · Narration by AI".
+- Show the route's friendly messages (unknown resting place, region,
+  narration down) in the card.
+- Loading state while the AI is thinking.
+- Use public/images/tombstone-frame.png for the card if it's simple.
+- No map, search box, or animation yet.
+Append a log entry when approved.
+```
+**Why:** Replace the starter page with the first real screen, using the routes that already work.
+**Result:**
+- Plan approved: server `app/page.tsx` passes the roster (Elvira hidden) to a new client `app/TourGuide.tsx`; facts and narration in separate, labeled blocks.
+- I chose tombstone image on top, text below (the stone's inner panel is too small for 80 words + facts, especially on phones).
+**Commit:**
+**Mistake caught:**
