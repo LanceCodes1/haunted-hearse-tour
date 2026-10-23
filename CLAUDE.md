@@ -19,6 +19,7 @@
 - Wikidata is the ONLY source of facts (burial place, coordinates, dates).
   The AI writes narration from those facts and never invents facts.
 - Exception: the narrator may name one signature work by title. All burial, date, and place facts still come only from Wikidata. Notable-work field from Wikidata is parked for W7.
+- Exception: Legend taglines are AI-drafted copy, cross-checked in HQ chat. Not Wikidata facts.
 - Every AI feature needs guards for: bad input, bad output, and failure/slowness
   (try/catch, timeout, friendly messages). Raw errors go to the log; users get plain language.
 

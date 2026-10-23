@@ -7,29 +7,30 @@ export type Legend = {
   group: "LA Legends" | "Beyond LA";
   testOnly?: true; // used for guardrail tests, hidden from the tour list
   burialIsRegion?: true; // Wikidata lists a region, not a cemetery, so no map pin
+  tagline?: string; // AI-drafted one-liner, cross-checked by hand (not a Wikidata fact)
 };
 
 export const ROSTER: Legend[] = [
-  { id: "Q34529", name: "Bela Lugosi", group: "LA Legends" },
-  { id: "Q78505", name: "Peter Lorre", group: "LA Legends" },
-  { id: "Q237813", name: "Maila Nurmi", group: "LA Legends" },
-  { id: "Q312656", name: "Lon Chaney", group: "LA Legends" }, // Sr., 1883–1930
-  { id: "Q381831", name: "James Whale", group: "LA Legends" },
-  { id: "Q51476", name: "Tod Browning", group: "LA Legends" },
-  { id: "Q61074", name: "Carl Laemmle", group: "LA Legends" },
-  { id: "Q1351410", name: "Tor Johnson", group: "LA Legends" },
-  { id: "Q1368948", name: "Glenn Strange", group: "LA Legends" },
-  { id: "Q219640", name: "Vincent Price", group: "LA Legends" }, // no burial place: fallback demo
-  { id: "Q16867", name: "Edgar Allan Poe", group: "Beyond LA" },
-  { id: "Q47152", name: "Mary Shelley", group: "Beyond LA" },
-  { id: "Q169566", name: "H.P. Lovecraft", group: "Beyond LA" },
-  { id: "Q181667", name: "Washington Irving", group: "Beyond LA" },
-  { id: "Q131545", name: "Harry Houdini", group: "Beyond LA" },
-  { id: "Q435920", name: "Rod Serling", group: "Beyond LA", burialIsRegion: true }, // Wikidata says "New York" (the state)
-  { id: "Q184785", name: "Anne Rice", group: "Beyond LA" },
-  { id: "Q36184", name: "Bram Stoker", group: "Beyond LA" }, // a crematorium, not a grave
-  { id: "Q203219", name: "Boris Karloff", group: "Beyond LA" }, // no burial place: fallback demo
-  { id: "Q318734", name: "Claude Rains", group: "Beyond LA" },
+  { id: "Q34529", name: "Bela Lugosi", group: "LA Legends", tagline: "The iconic screen Dracula, cape and all." },
+  { id: "Q78505", name: "Peter Lorre", group: "LA Legends", tagline: "Hollywood's most unsettling wide-eyed villain, star of M." },
+  { id: "Q237813", name: "Maila Nurmi", group: "LA Legends", tagline: "Vampira, television's first horror host." },
+  { id: "Q312656", name: "Lon Chaney", group: "LA Legends", tagline: "The Man of a Thousand Faces, the original Phantom of the Opera." }, // Sr., 1883–1930
+  { id: "Q381831", name: "James Whale", group: "LA Legends", tagline: "The director who brought Frankenstein's monster to life." },
+  { id: "Q51476", name: "Tod Browning", group: "LA Legends", tagline: "Director of Dracula and the cult classic Freaks." },
+  { id: "Q61074", name: "Carl Laemmle", group: "LA Legends", tagline: "Founder of Universal Pictures, home of the classic monsters." },
+  { id: "Q1351410", name: "Tor Johnson", group: "LA Legends", tagline: "The hulking wrestler-turned-actor of Plan 9 from Outer Space." },
+  { id: "Q1368948", name: "Glenn Strange", group: "LA Legends", tagline: "Frankenstein's monster in Universal's later monster rallies." },
+  { id: "Q219640", name: "Vincent Price", group: "LA Legends", tagline: "The velvet-voiced master of House on Haunted Hill." }, // no burial place: fallback demo
+  { id: "Q16867", name: "Edgar Allan Poe", group: "Beyond LA", tagline: "The poet of The Raven and master of the macabre." },
+  { id: "Q47152", name: "Mary Shelley", group: "Beyond LA", tagline: "The author who created Frankenstein." },
+  { id: "Q169566", name: "H.P. Lovecraft", group: "Beyond LA", tagline: "Creator of Cthulhu and cosmic horror." },
+  { id: "Q181667", name: "Washington Irving", group: "Beyond LA", tagline: "Author of The Legend of Sleepy Hollow and its Headless Horseman." },
+  { id: "Q131545", name: "Harry Houdini", group: "Beyond LA", tagline: "The escape artist who exposed fake spirit mediums." },
+  { id: "Q435920", name: "Rod Serling", group: "Beyond LA", tagline: "Creator and host of The Twilight Zone.", burialIsRegion: true }, // Wikidata says "New York" (the state)
+  { id: "Q184785", name: "Anne Rice", group: "Beyond LA", tagline: "Author of Interview with the Vampire." },
+  { id: "Q36184", name: "Bram Stoker", group: "Beyond LA", tagline: "The author who unleashed Dracula." }, // a crematorium, not a grave
+  { id: "Q203219", name: "Boris Karloff", group: "Beyond LA", tagline: "Universal's Frankenstein monster and the original Mummy." }, // no burial place: fallback demo
+  { id: "Q318734", name: "Claude Rains", group: "Beyond LA", tagline: "The Invisible Man himself." },
   { id: "Q253942", name: "Cassandra Peterson (Elvira)", group: "LA Legends", testOnly: true }, // living: must be rejected
 ];
 

@@ -503,3 +503,95 @@ Price and Serling show no map, attribution visible. Phase 1 complete.
 - Phase 1 complete: Wikidata facts, AI narration with guardrails, roster + search with input checks, tour stop card, map pin.
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 8 plan: Grindhouse styling, intro panel, taglines (plan mode)
+**Tool:** Claude Code (plan mode)
+**Prompt:**
+```
+Plan only: grindhouse styling pass + intro panel + legend taglines.
+Front end only. No new routes or packages (Google Font is OK).
+- Intro panel replaces "Pick a legend to start the tour": headline, hook
+  "Before Freddy, Jason, and Chucky, these are the people who invented
+  the monsters. Hop in.", a 3-step how-it-works line, and
+  "Facts from Wikidata · Narration by AI".
+- Use my images: background.png (page), header-overlay.svg (title),
+  hearse.png (intro panel), billboard.png if it fits.
+- Grindhouse feel: rusted signage colors, horror display font, subtle
+  title flicker. Original art only. Readable and phone-friendly.
+ALSO:
+- Legend list: modern 2026-style buttons (rounded, soft glow on hover,
+  smooth transitions), keeping the grindhouse colors.
+- Ghost tooltip: on hover OR keyboard focus, a translucent "ghost" box
+  shows a one-line tagline (what they're known for, no dates). Store the
+  20 taglines in the roster file. Show me all 20 so I can spot-check.
+- Add to parked.md: Phase 2 CRUD moved to W7 (missed the 3 PM checkpoint).
+Append a log entry when approved.
+```
+**Why:** Give the working Phase 1 app its grindhouse look and a welcome screen before the demo.
+**Result:**
+- Plan approved: Creepster title with a flicker (off for reduced motion), rust/blood/bone/amber colors, always-dark page; new `app/IntroPanel.tsx`; rounded glowing buttons with a ghost tagline tooltip on hover and keyboard focus.
+- I chose: billboard as the intro panel hero with the hearse under it; 20 taglines drafted for my spot-check (they're hand-written facts, not from Wikidata).
+**Commit:**
+**Mistake caught:**
+
+### Thu Oct 22 — Step 8: Build grindhouse styling, intro panel, taglines
+**Tool:** Claude Code (+ Claude in Chrome for a visual check)
+**Prompt:**
+```
+1: The iconic screen Dracula, cape and all.
+Add a CLAUDE.md exception: "Legend taglines are AI-drafted copy,
+cross-checked in HQ chat. Not Wikidata facts."
+Then build it.
+```
+**Why:** Build the approved Step 8 plan, with my tagline fix and a CLAUDE.md note that taglines aren't Wikidata facts.
+**Result:**
+- Creepster flickering title on the drip header, cemetery background, new `app/IntroPanel.tsx` (billboard + hearse + hook + 3 steps + label), rounded glowing buttons with ghost tagline tooltips; 20 taglines in `lib/roster.ts`; CLAUDE.md tagline exception; Phase 2 CRUD → W7 in `parked.md`.
+- Types, lint, and `npm run build` pass; checked in Chrome on desktop: intro panel, tooltip on hover, Lugosi card with map and narration all readable. Phone width not checked yet (window resize didn't apply).
+**Commit:**
+**Mistake caught:**
+
+### Thu Oct 22 — Step 8b: Loading overlay + scroll to card
+**Tool:** Claude Code
+**Prompt:**
+```
+Front end only, change nothing else:
+- While the narration loads, show "Mortimer is warming up the hearse..."
+  as a fixed overlay dead center of the screen, so it's visible no matter
+  where I've scrolled. Dim the page behind it.
+- Make it bigger, in the Creepster font, with a slow eerie pulse (respect
+  reduce motion).
+- When the card finishes loading, remove the overlay and scroll the card
+  into view.
+Append a log entry.
+```
+**Why:** The small loading line was easy to miss after scrolling down the roster, especially on a phone.
+**Result:**
+- Loading now shows a fixed, centered overlay over a dimmed, blurred page: big red Creepster text with a slow pulse (off for reduce motion), placed above the map (`z-[1000]`) and announced to screen readers (`role="status"`).
+- When the card arrives, the overlay disappears and the card scrolls into view (instant jump instead of smooth scroll for reduce motion). Types and lint pass.
+**Commit:**
+**Mistake caught:**
+
+### Thu Oct 22 — Step 8c: Lighter loading overlay over the card column
+**Tool:** Claude Code
+**Prompt:**
+```
+Loading overlay only: remove the blur and lighten the dim to about 30%
+so the page and background stay clearly visible behind the text. Keep
+the centered Creepster text, size, and pulse. Add a soft dark glow
+behind the letters so they stay readable. Change nothing else.
+```
+Follow-up:
+```
+Loading overlay: keep it fixed and vertically centered on screen, but
+center it horizontally over the card column (right side), not the whole
+page, so it never overlaps the legend list. Scale the text down if needed
+so it fits that column. On phones, keep it centered full-width. Change
+nothing else. Then add a short Step 8c log entry covering the overlay
+changes.
+```
+**Why:** The 8b overlay hid too much of the page, and its text ran over the legend list.
+**Result:**
+- Dim lowered to 30% with no blur; a dark drop-shadow behind the red letters keeps them readable.
+- On wider screens the text centers over the card column only (position calculated from the page layout); full width on phones; text capped at `text-4xl`/`lg:text-5xl` to fit. Types, lint, and build pass.
+**Commit:**
+**Mistake caught:**

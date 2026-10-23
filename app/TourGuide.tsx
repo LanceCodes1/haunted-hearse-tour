@@ -2,16 +2,17 @@
 // Front end: the clickable roster and the tour stop card. It only ever calls our own /api/narrate route.
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import IntroPanel from "./IntroPanel";
 import { checkSearch, type LivingName } from "./searchCheck";
 
 // Leaflet needs the browser, so the map skips server rendering and loads on the client only
 const TourMap = dynamic(() => import("./TourMap"), {
   ssr: false,
-  loading: () => <p className="mt-3 text-sm text-zinc-500">Loading map…</p>,
+  loading: () => <p className="mt-3 text-sm text-bone/60">Loading map…</p>,
 });
 
-export type TourName = { id: string; name: string; group: "LA Legends" | "Beyond LA" };
+export type TourName = { id: string; name: string; group: "LA Legends" | "Beyond LA"; tagline: string };
 
 // What /api/narrate sends back: facts + narration, or just a friendly error
 type TourStop = {
@@ -41,6 +42,14 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
   const [query, setQuery] = useState("");
   const [searchMessage, setSearchMessage] = useState<string | null>(null);
   const [matches, setMatches] = useState<TourName[]>([]);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // When a card finishes loading, scroll it into view (no smooth scroll if the user asked for less motion)
+  useEffect(() => {
+    if (!stop || loading) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    cardRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+  }, [stop, loading]);
 
   // Search box: run every input check first; only a single clear match calls the API
   function search(event: FormEvent) {
@@ -85,16 +94,16 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
               disabled={loading}
               placeholder="Search a legend…"
               aria-label="Search a legend"
-              className="min-w-0 flex-1 rounded border border-zinc-400 bg-transparent px-2 py-1.5"
+              className="min-w-0 flex-1 rounded-full border border-rust/60 bg-tar/80 px-4 py-2 text-bone placeholder:text-bone/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
             />
-            <button type="submit" disabled={loading} className="rounded bg-zinc-800 px-3 py-1.5 text-white disabled:opacity-60">
+            <button type="submit" disabled={loading} className="rounded-full bg-blood px-4 py-2 font-sign text-bone transition duration-200 hover:shadow-[0_0_16px_rgba(168,18,31,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber disabled:opacity-60 motion-reduce:transition-none">
               Search
             </button>
           </div>
-          {searchMessage && <p className="text-sm italic text-zinc-500">{searchMessage}</p>}
+          {searchMessage && <p className="px-2 text-sm italic text-amber">{searchMessage}</p>}
           {matches.length > 0 && (
             <div className="text-sm">
-              <p className="mb-1 text-zinc-500">A few legends match:</p>
+              <p className="mb-1 px-2 text-bone/70">A few legends match:</p>
               <div className="flex flex-wrap gap-1">
                 {matches.map((legend) => (
                   <button
@@ -102,7 +111,7 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
                     type="button"
                     onClick={() => visit(legend.id)}
                     disabled={loading}
-                    className="rounded border border-zinc-400 px-2 py-0.5 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                    className="rounded-full border border-rust/60 bg-tar/80 px-3 py-1 text-bone transition duration-200 hover:border-amber hover:shadow-[0_0_12px_rgba(242,169,59,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
                   >
                     {legend.name}
                   </button>
@@ -114,21 +123,30 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
 
         {groups.map((group) => (
           <section key={group}>
-            <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">{group}</h2>
-            <ul className="flex flex-col gap-1">
+            <h2 className="mb-2 px-2 font-sign text-sm uppercase tracking-widest text-amber">{group}</h2>
+            <ul className="flex flex-col gap-2">
               {tour
                 .filter((legend) => legend.group === group)
                 .map((legend) => (
-                  <li key={legend.id}>
+                  <li key={legend.id} className="group relative">
                     <button
                       onClick={() => visit(legend.id)}
                       disabled={loading}
-                      className={`w-full rounded px-3 py-1.5 text-left transition-colors disabled:cursor-wait disabled:opacity-60 ${
-                        legend.id === selectedId ? "bg-zinc-800 text-white" : "hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                      aria-describedby={`tip-${legend.id}`}
+                      className={`w-full rounded-full border px-4 py-2 text-left transition duration-200 ease-out hover:-translate-y-0.5 hover:border-amber hover:shadow-[0_0_16px_rgba(242,169,59,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+                        legend.id === selectedId ? "border-blood bg-blood text-bone" : "border-rust/60 bg-tar/80 text-bone"
                       }`}
                     >
                       {legend.name}
                     </button>
+                    {/* Ghost tooltip: fades in on hover or keyboard focus, never blocks a click */}
+                    <span
+                      id={`tip-${legend.id}`}
+                      role="tooltip"
+                      className="pointer-events-none absolute bottom-full left-2 right-2 z-20 mb-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-sm text-bone opacity-0 shadow-[0_0_20px_rgba(232,220,196,0.25)] backdrop-blur-md transition-opacity duration-300 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+                    >
+                      {legend.tagline}
+                    </span>
                   </li>
                 ))}
             </ul>
@@ -138,9 +156,25 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
 
       {/* Tour stop card */}
       <section className="min-h-64">
-        {!selectedId && <p className="text-zinc-500">Pick a legend to start the tour.</p>}
-        {loading && <p className="text-zinc-500">Mortimer is warming up the hearse…</p>}
-        {stop && <TourStopCard stop={stop} />}
+        {!selectedId && <IntroPanel />}
+        {/* Loading overlay: fixed and vertically centered over a dimmed page, visible wherever you've scrolled */}
+        {loading && (
+          <div role="status" aria-live="polite" className="fixed inset-0 z-[1000] bg-tar/30">
+            {/* Phones: full width. Wider screens: only over the card column, matching the page layout
+                (side gap + 1.5rem padding + 16rem list + 2rem gap), so it never covers the legend list */}
+            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-center px-6 md:left-[calc((100vw-min(100vw,64rem))/2+19.5rem)] md:right-[calc((100vw-min(100vw,64rem))/2+1.5rem)]">
+              {/* Soft dark glow behind the letters (a filter, so it doesn't fight the pulse's red glow) */}
+              <p className="eerie-pulse text-center font-display text-4xl tracking-wide text-blood drop-shadow-[0_0_10px_rgba(0,0,0,0.95)] lg:text-5xl">
+                Mortimer is warming up the hearse…
+              </p>
+            </div>
+          </div>
+        )}
+        {stop && (
+          <div ref={cardRef} className="scroll-mt-4">
+            <TourStopCard stop={stop} />
+          </div>
+        )}
       </section>
     </div>
   );
@@ -148,8 +182,8 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
 
 function TourStopCard({ stop }: { stop: TourStop }) {
   return (
-    <article className="mx-auto max-w-xl overflow-hidden rounded-lg bg-zinc-900 text-zinc-100 shadow-lg">
-      <div className="flex justify-center bg-black pt-4">
+    <article className="mx-auto max-w-xl overflow-hidden rounded-2xl border border-rust/60 bg-tar/90 text-bone shadow-[0_0_40px_rgba(168,18,31,0.25)]">
+      <div className="flex justify-center bg-black/60 pt-4">
         <Image src="/images/tombstone-frame.png" alt="Tombstone" width={240} height={219} />
       </div>
 
@@ -161,13 +195,13 @@ function TourStopCard({ stop }: { stop: TourStop }) {
           <>
             {/* Facts block: straight from Wikidata, never from the AI */}
             <div>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-zinc-400">Facts from Wikidata</h3>
+              <h3 className="mb-1 font-sign text-xs uppercase tracking-widest text-amber">Facts from Wikidata</h3>
               <p className="text-2xl font-bold">{stop.name}</p>
-              <p className="text-zinc-300">
+              <p className="text-bone/80">
                 {formatDate(stop.born)} – {formatDate(stop.died)}
               </p>
-              <p className="text-zinc-300">Resting place: {stop.burialPlace ?? "Unknown"}</p>
-              {stop.message && <p className="mt-2 italic text-zinc-400">{stop.message}</p>}
+              <p className="text-bone/80">Resting place: {stop.burialPlace ?? "Unknown"}</p>
+              {stop.message && <p className="mt-2 italic text-bone/70">{stop.message}</p>}
               {/* Map only when Wikidata gave real coordinates; a new key builds a fresh map per legend */}
               {stop.coordinates && (
                 <TourMap
@@ -180,22 +214,22 @@ function TourStopCard({ stop }: { stop: TourStop }) {
             </div>
 
             {/* Narration block: kept visibly separate from the facts */}
-            <div className="border-t border-zinc-700 pt-4">
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-zinc-400">Narration by AI</h3>
+            <div className="border-t border-rust/40 pt-4">
+              <h3 className="mb-1 font-sign text-xs uppercase tracking-widest text-amber">Narration by AI</h3>
               {stop.narration ? (
                 <>
-                  <p className="mb-2 text-lg font-semibold">{stop.narration.title}</p>
+                  <p className="mb-2 font-display text-2xl tracking-wide text-blood">{stop.narration.title}</p>
                   <p className="leading-relaxed">{stop.narration.text}</p>
                 </>
               ) : (
-                <p className="italic text-zinc-400">{stop.narrationError ?? "Our tour guide lost their voice. Here are the facts for now."}</p>
+                <p className="italic text-bone/70">{stop.narrationError ?? "Our tour guide lost their voice. Here are the facts for now."}</p>
               )}
             </div>
           </>
         )}
 
         {/* Honesty label on every card */}
-        <p className="border-t border-zinc-700 pt-3 text-center text-xs text-zinc-500">{LABEL}</p>
+        <p className="border-t border-rust/40 pt-3 text-center text-xs text-bone/60">{LABEL}</p>
       </div>
     </article>
   );

@@ -13,3 +13,4 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Narrator example:** rewrite the EXAMPLE to name one title, skip filler, and avoid present-day claims (W2 lesson: the example drives behavior more than rules).
 - **Search any legend beyond the 20 (W7):** needs a Wikidata name search, handling the wrong person with the same name, and the general cemetery check above.
 - **Smaller pin image:** `map-pin.png` is about 900 KB (1713×918) and Leaflet loads it at full size. A cropped, small copy would make the map faster.
+- **Phase 2 CRUD moved to W7:** saving a tour route with Prisma + Neon. Missed the Thursday 3 PM checkpoint.
