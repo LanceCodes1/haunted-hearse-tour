@@ -454,3 +454,25 @@ cemetery check. Append a log entry for the search box tests and this fix.
 - Fix: a rejected search now clears the card and the highlighted name; matches and single opens are unchanged. Added "search any legend beyond the 20 (W7)" to `parked.md`.
 **Commit:**
 **Mistake caught:** A rejected search kept the previous card on screen.
+
+### Thu Oct 22 — Step 7 plan: Map pin on the tour stop card (plan mode)
+**Tool:** Claude Code (plan mode)
+**Prompt:**
+```
+Plan only: add a map to the tour stop card.
+- Leaflet + OpenStreetMap tiles (free, no key). Load it client-side only
+  so it doesn't break Next.js server rendering.
+- When a legend has coordinates: show the map centered on the pin, using
+  public/images/map-pin.png as the marker.
+- When coordinates are null (Price, Karloff, Serling): no map, keep the
+  existing message.
+- Add the OpenStreetMap attribution on the map.
+- Front end only. No route changes.
+Append a log entry when approved.
+```
+**Why:** The last Phase 1 item: show each grave on a map, using the coordinates Wikidata already gives us.
+**Result:**
+- Plan approved: plain Leaflet 1.9.4 (no react-leaflet) in a new `app/TourMap.tsx`, loaded with `next/dynamic` + `ssr: false`; map only when coordinates exist.
+- Pin image is 1713×918 with a transparent border, so the marker is anchored at the pin's tip, not the image corner.
+**Commit:**
+**Mistake caught:**
