@@ -476,3 +476,30 @@ Append a log entry when approved.
 - Pin image is 1713×918 with a transparent border, so the marker is anchored at the pin's tip, not the image corner.
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 7: Build map pin
+**Tool:** Claude Code
+**Prompt:**
+```
+build it
+```
+**Why:** Build the approved Step 7 plan: a map with the skull pin for every legend who has cemetery coordinates.
+**Result:**
+- Installed `leaflet` 1.9.4 + `@types/leaflet` (dev); new `app/TourMap.tsx`, loaded in `app/TourGuide.tsx` with `next/dynamic` + `ssr: false`, shown only when `coordinates` exist.
+- Types, lint, and `npm run build` pass; `npm audit` still shows the same 5 ESLint warnings (nothing new).
+**Commit:**
+**Mistake caught:**
+
+### Thu Oct 22 — Step 7b: Map tests, Phase 1 complete
+**Tool:** Browser (map tests) + Claude Code (logging only)
+**Prompt:**
+```
+Append a log entry for the map tests: Lugosi and Lorre pins correct,
+Price and Serling show no map, attribution visible. Phase 1 complete.
+```
+**Why:** Confirm the map works on real stops, including the no-coordinates cases, before closing Phase 1.
+**Result:**
+- Lugosi and Lorre pins land correctly; Price and Serling show no map; the OpenStreetMap attribution is visible.
+- Phase 1 complete: Wikidata facts, AI narration with guardrails, roster + search with input checks, tour stop card, map pin.
+**Commit:**
+**Mistake caught:**

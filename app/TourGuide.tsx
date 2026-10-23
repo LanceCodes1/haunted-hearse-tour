@@ -1,8 +1,15 @@
 "use client";
 // Front end: the clickable roster and the tour stop card. It only ever calls our own /api/narrate route.
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState, type FormEvent } from "react";
 import { checkSearch, type LivingName } from "./searchCheck";
+
+// Leaflet needs the browser, so the map skips server rendering and loads on the client only
+const TourMap = dynamic(() => import("./TourMap"), {
+  ssr: false,
+  loading: () => <p className="mt-3 text-sm text-zinc-500">Loading map…</p>,
+});
 
 export type TourName = { id: string; name: string; group: "LA Legends" | "Beyond LA" };
 
@@ -12,6 +19,7 @@ type TourStop = {
   born?: string | null;
   died?: string | null;
   burialPlace?: string | null;
+  coordinates?: { lat: number; lon: number } | null;
   message?: string;
   narration?: { title: string; text: string } | null;
   narrationError?: string;
@@ -160,6 +168,15 @@ function TourStopCard({ stop }: { stop: TourStop }) {
               </p>
               <p className="text-zinc-300">Resting place: {stop.burialPlace ?? "Unknown"}</p>
               {stop.message && <p className="mt-2 italic text-zinc-400">{stop.message}</p>}
+              {/* Map only when Wikidata gave real coordinates; a new key builds a fresh map per legend */}
+              {stop.coordinates && (
+                <TourMap
+                  key={stop.name}
+                  lat={stop.coordinates.lat}
+                  lon={stop.coordinates.lon}
+                  place={stop.burialPlace ?? stop.name ?? "this stop"}
+                />
+              )}
             </div>
 
             {/* Narration block: kept visibly separate from the facts */}
