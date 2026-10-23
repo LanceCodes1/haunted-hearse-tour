@@ -403,3 +403,24 @@ build it
 - Checks: types + lint pass; home page renders 20 buttons in two groups, Elvira not listed; tab title is "Haunted Hearse Tour".
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 6 plan: Search box with input checks (plan mode)
+**Tool:** Claude Code (plan mode)
+**Prompt:**
+```
+Plan only: add a search box above the roster list.
+- User types a name → match against the 20 roster names (case-insensitive,
+  partial match OK) → open that legend's card.
+- Input checks BEFORE any API call: empty, over 60 characters, gibberish
+  (no letters), a name not on the tour, and Cassandra Peterson / Elvira
+  (show "No tombstones for the living.").
+- Each check shows a friendly message under the box.
+- Front end only unless the routes need a change; tell me if they do.
+Append a log entry when approved.
+```
+**Why:** The last must-ship piece; every input check runs in the browser before any API call.
+**Result:**
+- Plan approved: new `app/searchCheck.ts` runs empty → over 60 → no letters → living → match; no route changes needed (the server's roster + living checks stay as the safety net).
+- I chose: 2+ matches show clickable name buttons; no API call until one is picked.
+**Commit:**
+**Mistake caught:** The plan's test table said "lo" matches Lorre, Chaney, and Lovecraft, but "Karloff" contains "lo" too, so 4 buttons should show.
