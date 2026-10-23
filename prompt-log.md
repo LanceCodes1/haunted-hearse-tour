@@ -332,3 +332,22 @@ build it
 - All tests passed: Lugosi normal; Price no burial + fallback message; Serling "New York" with no pin; Elvira, `abc`, and no ID → 400 with no AI call (only 3 token lines logged: in ~853–867, out ~175–208, ~$0.00017–0.00019/call).
 **Commit:**
 **Mistake caught:** My first test run used a loop variable named `path`, which in zsh wipes out the command search path (`curl: command not found`); renamed it and reran. Also, the Lugosi narration added "the living still leave flowers", a detail not in the facts.
+
+### Thu Oct 22 — Step 4b: Tighter narrator rules
+**Tool:** Claude Code
+**Prompt:**
+```
+Before UI: update lib/narratorPrompt.ts rules only:
+- You may name ONE signature work by title. No years, quotes, or awards.
+- Never describe the grave site today, visitors, or what happens there now.
+- Hard limit: 80 words for text. No filler about missing facts unless a
+  fact is actually missing.
+Change nothing else. Rerun Lugosi, Price, and Serling and show me the
+narrations with word counts. Append a log entry.
+```
+**Why:** Step 4 narrations ran over 80 words, invented a grave-site detail ("the living still leave flowers"), and added filler.
+**Result:**
+- RULES updated: the "famous work in general terms" line replaced with "ONE signature work by title"; added the grave-site and 80-word rules.
+- Reruns: Lugosi 75 words, Price 79, Serling 77, all under 80; no grave-site or visitor details. ~899–913 tokens in, ~174–189 out, ~$0.00018/call.
+**Commit:**
+**Mistake caught:** Lugosi still got filler ("the record books tell us only that much") even though no fact was missing.
