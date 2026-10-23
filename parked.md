@@ -14,4 +14,10 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Search any legend beyond the 20 (W7):** needs a Wikidata name search, handling the wrong person with the same name, and the general cemetery check above.
 - **Smaller pin image:** `map-pin.png` is about 900 KB (1713×918) and Leaflet loads it at full size. A cropped, small copy would make the map faster.
 - **Phase 2 CRUD moved to W7:** saving a tour route with Prisma + Neon. Missed the Thursday 3 PM checkpoint.
+
+## Showcase (weekend)
+
+- **README screenshots** in `docs/screenshots/`: the intro panel, the Lugosi card + map, the Elvira rejection, and a phone view.
+- **Demo GIF** of a full tour stop (pick a legend → loading → card + map → back to the entrance).
 - **Deploy to Vercel:** needs `ANTHROPIC_API_KEY` set in Vercel's project settings (never in code), a confirmed spend limit on the Anthropic account, and narration caching (see above) so public traffic doesn't pay for the same story twice.
+- **Live link in the README** once it's deployed.
