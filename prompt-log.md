@@ -595,3 +595,36 @@ changes.
 - On wider screens the text centers over the card column only (position calculated from the page layout); full width on phones; text capped at `text-4xl`/`lg:text-5xl` to fit. Types, lint, and build pass.
 **Commit:**
 **Mistake caught:**
+
+### Thu Oct 22 — Step 8d: Intro panel first on phones
+**Tool:** Claude Code
+**Prompt:**
+```
+Move the intro panel above the legend list on phones only. Change nothing
+else. Append a short log entry.
+```
+**Why:** On phones, all 20 names came before the intro panel, so the welcome screen was below the fold.
+**Result:**
+- While the intro panel shows, its column moves first on phones (`order-first`); from tablet width up the layout is unchanged.
+- Tour stop cards still appear below the list on phones (and scroll into view). Types and lint pass.
+**Commit:**
+**Mistake caught:**
+
+### Thu Oct 22 — Step 8e: Phone taglines + back to the entrance
+**Tool:** Claude Code
+**Prompt:**
+```
+Front end only, change nothing else:
+1. Phones only: show each legend's tagline as small text under the name
+   inside the button (no hover on touch). Keep the ghost tooltip on desktop.
+2. Add a "Back to the tour entrance" button at the top of the tour stop
+   card. It clears the selection, shows the intro panel again, and
+   scrolls to the top. Clicking the site title does the same.
+Append a short log entry.
+```
+**Why:** Touch screens can't hover, so phone users never saw the taglines; and there was no way back to the intro panel.
+**Result:**
+- Phones: tagline shows as small text inside each button (buttons get rounded corners instead of a pill so two lines fit); the ghost tooltip shows from tablet width up.
+- "← Back to the tour entrance" on every card, and a clickable site title (new `app/SiteTitle.tsx`), both send one browser event that clears the card and scrolls to the top. Types, lint, and build pass.
+**Commit:**
+**Mistake caught:**

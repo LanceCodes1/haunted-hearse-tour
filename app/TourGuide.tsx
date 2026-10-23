@@ -29,6 +29,9 @@ type TourStop = {
 
 const LABEL = "Facts from Wikidata · Narration by AI";
 
+// Browser event that sends the visitor back to the intro panel (used by the card button and the site title)
+export const ENTRANCE_EVENT = "tour:entrance";
+
 // Wikidata dates are "1882-10-20"; format in UTC so a time zone can't shift the day
 function formatDate(date?: string | null): string {
   if (!date) return "Unknown";
@@ -50,6 +53,18 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     cardRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }, [stop, loading]);
+
+  // "Back to the tour entrance": clear the selection, show the intro panel, scroll to the top
+  useEffect(() => {
+    function goToEntrance() {
+      setStop(null);
+      setSelectedId(null);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    }
+    window.addEventListener(ENTRANCE_EVENT, goToEntrance); // fired by the back button and the site title
+    return () => window.removeEventListener(ENTRANCE_EVENT, goToEntrance);
+  }, []);
 
   // Search box: run every input check first; only a single clear match calls the API
   function search(event: FormEvent) {
@@ -133,17 +148,19 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
                       onClick={() => visit(legend.id)}
                       disabled={loading}
                       aria-describedby={`tip-${legend.id}`}
-                      className={`w-full rounded-full border px-4 py-2 text-left transition duration-200 ease-out hover:-translate-y-0.5 hover:border-amber hover:shadow-[0_0_16px_rgba(242,169,59,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+                      className={`w-full rounded-2xl border px-4 py-2 text-left md:rounded-full transition duration-200 ease-out hover:-translate-y-0.5 hover:border-amber hover:shadow-[0_0_16px_rgba(242,169,59,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
                         legend.id === selectedId ? "border-blood bg-blood text-bone" : "border-rust/60 bg-tar/80 text-bone"
                       }`}
                     >
                       {legend.name}
+                      {/* Phones have no hover, so the tagline shows right inside the button */}
+                      <span className="block text-xs text-bone/60 md:hidden">{legend.tagline}</span>
                     </button>
-                    {/* Ghost tooltip: fades in on hover or keyboard focus, never blocks a click */}
+                    {/* Ghost tooltip (tablet/desktop): fades in on hover or keyboard focus, never blocks a click */}
                     <span
                       id={`tip-${legend.id}`}
                       role="tooltip"
-                      className="pointer-events-none absolute bottom-full left-2 right-2 z-20 mb-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-sm text-bone opacity-0 shadow-[0_0_20px_rgba(232,220,196,0.25)] backdrop-blur-md transition-opacity duration-300 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+                      className="pointer-events-none absolute bottom-full hidden md:block left-2 right-2 z-20 mb-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-sm text-bone opacity-0 shadow-[0_0_20px_rgba(232,220,196,0.25)] backdrop-blur-md transition-opacity duration-300 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
                     >
                       {legend.tagline}
                     </span>
@@ -155,7 +172,8 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
       </nav>
 
       {/* Tour stop card */}
-      <section className="min-h-64">
+      {/* On phones, the intro panel moves above the legend list; cards stay below it */}
+      <section className={`min-h-64 ${!selectedId ? "order-first md:order-none" : ""}`}>
         {!selectedId && <IntroPanel />}
         {/* Loading overlay: fixed and vertically centered over a dimmed page, visible wherever you've scrolled */}
         {loading && (
@@ -183,6 +201,16 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
 function TourStopCard({ stop }: { stop: TourStop }) {
   return (
     <article className="mx-auto max-w-xl overflow-hidden rounded-2xl border border-rust/60 bg-tar/90 text-bone shadow-[0_0_40px_rgba(168,18,31,0.25)]">
+      {/* Back to the intro panel, same as clicking the site title */}
+      <div className="bg-black/60 px-4 pt-4">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event(ENTRANCE_EVENT))}
+          className="rounded-full border border-rust/60 px-3 py-1 font-sign text-sm text-bone transition duration-200 hover:border-amber hover:shadow-[0_0_12px_rgba(242,169,59,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
+        >
+          ← Back to the tour entrance
+        </button>
+      </div>
       <div className="flex justify-center bg-black/60 pt-4">
         <Image src="/images/tombstone-frame.png" alt="Tombstone" width={240} height={219} />
       </div>
