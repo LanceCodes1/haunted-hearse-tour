@@ -5,7 +5,7 @@
 **Prompt:** Pressure-test the W6 plan against the spec; riskiest piece + cut order.
 **Why:** Lock scope before writing code.
 **Result:** Wikidata = riskiest piece (name matching, coordinates two hops away, living-person guard depends on it). CRUD + Prisma/Neon parked until core works. Fallback demo must keep the search box (bad-input guard surface).
-**Commit:**
+**Commit:** `8afd95a` Add prompt log and project CLAUDE.md
 **Mistake caught:** AI gave placeholder paths (`~/path/to/your/projects`) that got pasted literally. Terminal errors (`cd: too many arguments`, `mv: No such file`) caught it; no damage.
 
 ### Wed Oct 21 — Phase 1 plan (plan mode)
@@ -56,7 +56,7 @@ Ask me questions before assuming anything.
 - 7-step plan approved; decisions: Claude, my own 20 names saved by Wikidata ID, AI route takes an ID only.
 - Riskiest part: Wikidata (name matching, cremated stars with no pin).
 - `.env.local` confirmed git-ignored by the `.env*` rule.
-**Commit:**
+**Commit:** `03f2cf1` Add guardrail, honesty, and planning rules to CLAUDE.md
 **Mistake caught:** "Gibberish" had no concrete rule; now defined as failing the character check or no human match on Wikidata.
 
 ### Wed Oct 21 — Step 1b: Roster check (live Wikidata lookup)
@@ -81,7 +81,7 @@ has coordinates (yes/no). I'll spot-check before we save them.
 - All 20 IDs found live; table shown in chat, nothing saved to the repo yet.
 - Price and Karloff have no burial place; Stoker has coordinates (crematorium); Serling's "burial place" is New York State.
 - Wikidata returned a 429 mid-lookup, so the app needs that guard too.
-**Commit:**
+**Commit:** `03f2cf1` Add guardrail, honesty, and planning rules to CLAUDE.md
 **Mistake caught:** Plan's Lugosi ID (Q102054) was from AI memory and wrong; real ID is Q34529 (Holy Cross Cemetery).
 
 ### Thu Oct 22 — Step 1: API key safety check (no code changes)
@@ -98,7 +98,7 @@ Log two checks I ran in the terminal (no code changes):
 **Result:**
 - `git check-ignore .env.local` printed `.env.local`, so git ignores the key file.
 - `git log -S "sk-ant" --oneline` printed nothing, so no commit ever contained the key.
-**Commit:**
+**Commit:** `873a062` Add image assets and log setup checks
 **Mistake caught:** Yesterday's session left uncommitted work from Claude Code, which was caught afterward; these checks confirmed the key never reached git history.
 
 ### Thu Oct 22 — Step 2: Wikidata route for Bela Lugosi
@@ -113,7 +113,7 @@ dates as JSON. Plan only. Wait for my approval.
 **Result:**
 - New `lib/wikidata.ts` (one SPARQL query, 8s timeout, 429 message, User-Agent) and `app/api/legend/route.ts`.
 - `/api/legend` returns Lugosi: 1882-10-20 to 1956-08-16, Holy Cross Cemetery, lat 33.991649 / lon -118.387096.
-**Commit:**
+**Commit:** `215b937` Add Wikidata burial-facts route for Bela Lugosi
 **Mistake caught:** Wikidata gives coordinates as `Point(lon lat)` (longitude first); the code swaps them so the pin won't land in the wrong place.
 
 ### Thu Oct 22 — Step 2b: Move and rename image assets
@@ -130,7 +130,7 @@ before and after. Then append a log entry.
 **Result:**
 - 6 files moved into `public/images/` with `git mv`, so git shows them as renames and keeps their history.
 - Next's 5 default SVGs stay in `public/`; no code referenced the old names, so nothing else changed.
-**Commit:**
+**Commit:** `721fce2` Move images to public/images and rename
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 2c: Create GitHub repo and push
@@ -145,7 +145,7 @@ is not in the repo.
 **Result:**
 - Created public repo `LanceCodes1/haunted-hearse-tour` with `gh repo create`; pushed `main` over SSH, tracking `origin/main`.
 - Checked on GitHub that `.env.local` is not in the repo.
-**Commit:**
+**Commit:** `1f15d64` Log repo setup and add repo URL to User-Agent
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 2d: Add repo URL to Wikidata User-Agent
@@ -160,7 +160,7 @@ Change only that one line. Then append a log entry.
 **Result:**
 - One line changed in `lib/wikidata.ts`: `USER_AGENT` now includes the repo URL.
 - Nothing else in the code changed.
-**Commit:**
+**Commit:** `1f15d64` Log repo setup and add repo URL to User-Agent
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 3 plan: AI narration route (plan mode)
@@ -181,7 +181,7 @@ Append a log entry when the plan is approved.
 **Result:**
 - Plan approved; I chose narration shape = title + paragraph (structured JSON with `title` and `text`).
 - Guards: 1,000-char input cap, `max_tokens` 400, 10s timeout with retries off, a "no tombstones for the living" check, a shape check, and a token/cost log at $0.10/$0.50 per 1M tokens.
-**Commit:**
+**Commit:** `42801b4` Log Step 3 narration route plan
 **Mistake caught:** SDK docs show Haiku 5.5 thinks by default (eats the output cap) and retries twice (a 10s timeout could become 30s); the plan turns both off.  
 
 ### Thu Oct 22 — Step 3: Build AI narration route
@@ -194,7 +194,7 @@ build it
 **Result:**
 - Installed `@anthropic-ai/sdk`; new `app/api/narrate/route.ts` and `lib/narratorPrompt.ts` (placeholder prompt, my text goes here).
 - `/api/narrate` returned Lugosi facts + `narration: {title, text}`; terminal logged `tokens in=331 out=101 · est $0.000084/call · $0.084 per 1,000 calls`.
-**Commit:**
+**Commit:** `7bb5083` Add AI narration route with guardrails
 **Mistake caught:** With the placeholder prompt, the AI added "Culver City, California", which isn't in the Wikidata facts. My system prompt must forbid adding anything not given.
 
 ### Thu Oct 22 — Step 3b: Add my narrator system prompt
@@ -211,7 +211,7 @@ title/text shape, tell me before changing anything. Append a log entry
 **Result:**
 - Placeholder replaced word for word; no code logic changed.
 - No FORMAT conflict: 3–7 word title and 60–80 word text fit the route's 80-char / 1,200-char checks and the 400-token cap.
-**Commit:**
+**Commit:** `b0d05d7` Add narrator prompt, famous-work exception, and parked list
 **Mistake caught:** Prompt now forbids adding a city/state/country, fixing the "Culver City, California" leak from Step 3.
 
 ### Thu Oct 22 — Step 3c: Fictional example in narrator prompt
@@ -229,7 +229,7 @@ example verbatim.
 **Result:**
 - EXAMPLE now uses Lady Ravenna Thorne: title "The Raven Queen Takes Her Rest", 65-word text ending "Keep your hands inside the hearse."
 - Rest of the prompt and all route code unchanged.
-**Commit:**
+**Commit:** `b0d05d7` Add narrator prompt, famous-work exception, and parked list
 **Mistake caught:** The model copied the Lugosi example verbatim instead of writing its own narration.
 
 ### Thu Oct 22 — Step 3d: Famous-work exception, cost check, Parked list
@@ -249,7 +249,7 @@ Follow-up: "New parked.md at the repo root with all the earlier items, EXCEPT ?i
 **Result:**
 - The fictional example fixed the verbatim copy; cost per call is ~885–910 tokens in, ~145–214 out, ~$0.0002/call, ~$0.19 per 1,000 calls.
 - CLAUDE.md now has the famous-work exception; new `parked.md` lists 8 items (?id= and card UI left out as next up).
-**Commit:**
+**Commit:** `b0d05d7` Add narrator prompt, famous-work exception, and parked list
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 3e: Search-box checks moved out of Parked
@@ -264,7 +264,7 @@ Follow-up: "Yes, add a short new log entry: removed search-box checks from parke
 **Result:**
 - Removed the search-box checks line from `parked.md`; it now lists 7 items (Step 3d said 8).
 - Next up: `?id=` param, search-box checks, tour stop card UI.
-**Commit:**
+**Commit:** `b0d05d7` Add narrator prompt, famous-work exception, and parked list
 **Mistake caught:** Search-box checks were parked by mistake; they're required guardrails.
 
 ### Thu Oct 22 — Step 3f: AI-down test + keep coordinates away from the AI
@@ -282,7 +282,7 @@ and this coordinates fix.
 **Result:**
 - AI-down test passed: with the key renamed, `/api/narrate` showed the facts + `narration: null` + "Our tour guide lost their voice"; with the key restored, narration came back.
 - The AI now gets only name, born, died, and burial place; the JSON response still includes coordinates for the map.
-**Commit:**
+**Commit:** `d558801` Send only narration facts to the AI
 **Mistake caught:** The route was sending the AI every field (coordinates, ID, source), which it didn't need.
 
 ### Thu Oct 22 — Step 4 plan: ?id= for both routes + roster file (plan mode)
@@ -301,7 +301,7 @@ a bad ID like "abc" (rejected). Append a log entry when approved.
 **Result:**
 - Plan approved: new `lib/roster.ts` with 20 legends + Elvira (Q253942, test only); one shared helper checks roster → Wikidata → living → region fix.
 - I chose: Serling keeps "New York" as his burial place but gets no map pin and an honest "only records the state" message.
-**Commit:**
+**Commit:** `750f552` Log Step 4 roster and id plan
 **Mistake caught:** The earlier verified ID table only existed in chat, never in the repo, so all 21 IDs had to be re-checked live. They matched the earlier notes (Price/Karloff no burial, Stoker crematorium, Serling = New York).
 
 ### Thu Oct 22 — Step 4 plan follow-up: spot-check + parked burial check
@@ -317,7 +317,7 @@ spot-checked Lon Chaney Sr. (Q312656) on wikidata.org, died 1930.
 **Result:**
 - Spot-checked Lon Chaney Sr. (Q312656) on wikidata.org: died 1930, so it's the father, not Lon Chaney Jr.
 - Added a general "burial place is a cemetery, crematorium, or church" check to `parked.md`.
-**Commit:**
+**Commit:** `750f552` Log Step 4 roster and id plan
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 4: Build ?id= + roster
@@ -330,7 +330,7 @@ build it
 **Result:**
 - New `lib/roster.ts` (20 legends + Elvira test-only) with one shared `getRosterFacts`; both routes now take `?id=`.
 - All tests passed: Lugosi normal; Price no burial + fallback message; Serling "New York" with no pin; Elvira, `abc`, and no ID → 400 with no AI call (only 3 token lines logged: in ~853–867, out ~175–208, ~$0.00017–0.00019/call).
-**Commit:**
+**Commit:** `ac687f0` Add roster and ?id= to legend and narrate routes
 **Mistake caught:** My first test run used a loop variable named `path`, which in zsh wipes out the command search path (`curl: command not found`); renamed it and reran. Also, the Lugosi narration added "the living still leave flowers", a detail not in the facts.
 
 ### Thu Oct 22 — Step 4b: Tighter narrator rules
@@ -349,7 +349,7 @@ narrations with word counts. Append a log entry.
 **Result:**
 - RULES updated: the "famous work in general terms" line replaced with "ONE signature work by title"; added the grave-site and 80-word rules.
 - Reruns: Lugosi 75 words, Price 79, Serling 77, all under 80; no grave-site or visitor details. ~899–913 tokens in, ~174–189 out, ~$0.00018/call.
-**Commit:**
+**Commit:** `26f08ab` Tighten narrator rules: one title, no grave-site details, 80 words
 **Mistake caught:** Lugosi still got filler ("the record books tell us only that much") even though no fact was missing.
 
 ### Thu Oct 22 — Step 4c: CLAUDE.md exception + parked example fix
@@ -365,7 +365,7 @@ signature work by title." Append a log entry.
 **Result:**
 - CLAUDE.md exception now reads "the narrator may name one signature work by title"; the rest of the line is unchanged.
 - Added the narrator-example rewrite to `parked.md`.
-**Commit:**
+**Commit:** `6e970fe` Sync CLAUDE.md title exception and park example rewrite
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 5 plan: Tour UI, roster list + tour stop card (plan mode)
@@ -388,7 +388,7 @@ Append a log entry when approved.
 **Result:**
 - Plan approved: server `app/page.tsx` passes the roster (Elvira hidden) to a new client `app/TourGuide.tsx`; facts and narration in separate, labeled blocks.
 - I chose tombstone image on top, text below (the stone's inner panel is too small for 80 words + facts, especially on phones).
-**Commit:**
+**Commit:** `934a0fb` Log Step 5 tour UI plan
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 5: Build tour UI
@@ -401,7 +401,7 @@ build it
 **Result:**
 - `app/page.tsx` replaced with the tour; new `app/TourGuide.tsx` has the grouped roster buttons, the loading message, and the tour stop card (tombstone on top, facts and narration in separate labeled blocks, "Facts from Wikidata · Narration by AI" footer).
 - Checks: types + lint pass; home page renders 20 buttons in two groups, Elvira not listed; tab title is "Haunted Hearse Tour".
-**Commit:**
+**Commit:** `204db6e` Add tour UI: roster list and tour stop card
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 6 plan: Search box with input checks (plan mode)
@@ -422,7 +422,7 @@ Append a log entry when approved.
 **Result:**
 - Plan approved: new `app/searchCheck.ts` runs empty → over 60 → no letters → living → match; no route changes needed (the server's roster + living checks stay as the safety net).
 - I chose: 2+ matches show clickable name buttons; no API call until one is picked.
-**Commit:**
+**Commit:** `906fa3b` Log Step 6 search box plan
 **Mistake caught:** The plan's test table said "lo" matches Lorre, Chaney, and Lovecraft, but "Karloff" contains "lo" too, so 4 buttons should show.
 
 ### Thu Oct 22 — Step 6: Build search box
@@ -435,7 +435,7 @@ build it
 **Result:**
 - New `app/searchCheck.ts` + a search form in `app/TourGuide.tsx`; `app/page.tsx` passes a small `living` list. No route changes.
 - Ran 13 inputs through `checkSearch`: empty/spaces, 61 chars, `12345`, `!!!`, `elvira`, `Cassandra Peterson`, `peterson`, and `dracula` all get the right message; `lo` shows 4 buttons (incl. Karloff); `peter`, `LUGOSI`, and `hp lovecraft` open one card.
-**Commit:**
+**Commit:** `6b9a835` Add search box with input checks; clear card on rejected search
 **Mistake caught:** The planned order (living check before matching) would have rejected "peter" and even "a" as living, because "Cassandra Peterson" contains them. Now "living" only applies when no tour legend matches.
 
 ### Thu Oct 22 — Step 6b: Search box tests + clear card on rejected search
@@ -452,7 +452,7 @@ cemetery check. Append a log entry for the search box tests and this fix.
 **Result:**
 - Search box tests in the browser: the rejection messages and matches worked, but a rejected search left the old card showing.
 - Fix: a rejected search now clears the card and the highlighted name; matches and single opens are unchanged. Added "search any legend beyond the 20 (W7)" to `parked.md`.
-**Commit:**
+**Commit:** `6b9a835` Add search box with input checks; clear card on rejected search
 **Mistake caught:** A rejected search kept the previous card on screen.
 
 ### Thu Oct 22 — Step 7 plan: Map pin on the tour stop card (plan mode)
@@ -474,7 +474,7 @@ Append a log entry when approved.
 **Result:**
 - Plan approved: plain Leaflet 1.9.4 (no react-leaflet) in a new `app/TourMap.tsx`, loaded with `next/dynamic` + `ssr: false`; map only when coordinates exist.
 - Pin image is 1713×918 with a transparent border, so the marker is anchored at the pin's tip, not the image corner.
-**Commit:**
+**Commit:** `a31eaed` Log Step 7 map plan
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 7: Build map pin
@@ -487,7 +487,7 @@ build it
 **Result:**
 - Installed `leaflet` 1.9.4 + `@types/leaflet` (dev); new `app/TourMap.tsx`, loaded in `app/TourGuide.tsx` with `next/dynamic` + `ssr: false`, shown only when `coordinates` exist.
 - Types, lint, and `npm run build` pass; `npm audit` still shows the same 5 ESLint warnings (nothing new).
-**Commit:**
+**Commit:** `9a130fa` Add Leaflet map pin; Phase 1 complete
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 7b: Map tests, Phase 1 complete
@@ -501,7 +501,7 @@ Price and Serling show no map, attribution visible. Phase 1 complete.
 **Result:**
 - Lugosi and Lorre pins land correctly; Price and Serling show no map; the OpenStreetMap attribution is visible.
 - Phase 1 complete: Wikidata facts, AI narration with guardrails, roster + search with input checks, tour stop card, map pin.
-**Commit:**
+**Commit:** `9a130fa` Add Leaflet map pin; Phase 1 complete
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 8 plan: Grindhouse styling, intro panel, taglines (plan mode)
@@ -531,7 +531,7 @@ Append a log entry when approved.
 **Result:**
 - Plan approved: Creepster title with a flicker (off for reduced motion), rust/blood/bone/amber colors, always-dark page; new `app/IntroPanel.tsx`; rounded glowing buttons with a ghost tagline tooltip on hover and keyboard focus.
 - I chose: billboard as the intro panel hero with the hearse under it; 20 taglines drafted for my spot-check (they're hand-written facts, not from Wikidata).
-**Commit:**
+**Commit:** `621ab0f` Add grindhouse styling, intro panel, taglines, and loading overlay
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 8: Build grindhouse styling, intro panel, taglines
@@ -547,7 +547,7 @@ Then build it.
 **Result:**
 - Creepster flickering title on the drip header, cemetery background, new `app/IntroPanel.tsx` (billboard + hearse + hook + 3 steps + label), rounded glowing buttons with ghost tagline tooltips; 20 taglines in `lib/roster.ts`; CLAUDE.md tagline exception; Phase 2 CRUD → W7 in `parked.md`.
 - Types, lint, and `npm run build` pass; checked in Chrome on desktop: intro panel, tooltip on hover, Lugosi card with map and narration all readable. Phone width not checked yet (window resize didn't apply).
-**Commit:**
+**Commit:** `621ab0f` Add grindhouse styling, intro panel, taglines, and loading overlay
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 8b: Loading overlay + scroll to card
@@ -568,7 +568,7 @@ Append a log entry.
 **Result:**
 - Loading now shows a fixed, centered overlay over a dimmed, blurred page: big red Creepster text with a slow pulse (off for reduce motion), placed above the map (`z-[1000]`) and announced to screen readers (`role="status"`).
 - When the card arrives, the overlay disappears and the card scrolls into view (instant jump instead of smooth scroll for reduce motion). Types and lint pass.
-**Commit:**
+**Commit:** `621ab0f` Add grindhouse styling, intro panel, taglines, and loading overlay
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 8c: Lighter loading overlay over the card column
@@ -593,7 +593,7 @@ changes.
 **Result:**
 - Dim lowered to 30% with no blur; a dark drop-shadow behind the red letters keeps them readable.
 - On wider screens the text centers over the card column only (position calculated from the page layout); full width on phones; text capped at `text-4xl`/`lg:text-5xl` to fit. Types, lint, and build pass.
-**Commit:**
+**Commit:** `621ab0f` Add grindhouse styling, intro panel, taglines, and loading overlay
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 8d: Intro panel first on phones
@@ -607,7 +607,7 @@ else. Append a short log entry.
 **Result:**
 - While the intro panel shows, its column moves first on phones (`order-first`); from tablet width up the layout is unchanged.
 - Tour stop cards still appear below the list on phones (and scroll into view). Types and lint pass.
-**Commit:**
+**Commit:** `e9f94fb` Phone intro order, phone taglines, and back to the entrance
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 8e: Phone taglines + back to the entrance
@@ -626,7 +626,7 @@ Append a short log entry.
 **Result:**
 - Phones: tagline shows as small text inside each button (buttons get rounded corners instead of a pill so two lines fit); the ghost tooltip shows from tablet width up.
 - "← Back to the tour entrance" on every card, and a clickable site title (new `app/SiteTitle.tsx`), both send one browser event that clears the card and scrolls to the top. Types, lint, and build pass.
-**Commit:**
+**Commit:** `e9f94fb` Phone intro order, phone taglines, and back to the entrance
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 9: Rewrite README
@@ -646,7 +646,7 @@ Leaflet), and what's parked for W7. Plain language. Append a log entry.
 **Result:**
 - README now covers all 9 sections: what it is, how it works, stack, setup, guardrails, cost, AI use, credits, and parked for W7; it links to `prompt-log.md` and `parked.md`.
 - Only a placeholder key (`your-key-here`) appears; no real key or secret.
-**Commit:**
+**Commit:** `d1a9aca` Rewrite README and add missing one-line comments
 **Mistake caught:**
 
 ### Thu Oct 22 — Step 9b: Fill in missing one-line comments
@@ -660,5 +660,29 @@ Append a short log entry.
 **Result:**
 - Added 8 one-line comments: 4 in `app/layout.tsx` (body font, mono font, tab title, page shell) and 4 in `app/TourGuide.tsx` (screen state, `visit()`, list order, `TourStopCard`).
 - Diff is comment lines only; types and lint pass.
-**Commit:**
+**Commit:** `d1a9aca` Rewrite README and add missing one-line comments
 **Mistake caught:**
+
+---
+
+## Week 6 lab wrap-up (Sun Oct 25)
+
+### Day 2 · Token usage: short vs. long input
+**Tool:** Terminal (token log from the narrate route)
+**Prompt:** No new prompt. Numbers come from the token log in Steps 3, 3d, and 4b.
+**Why:** The lab asks for short vs. long token counts and what drove the difference.
+**Result:**
+- Placeholder system prompt: **331 in / 101 out**. Full Mortimer prompt: **~885–913 in / ~145–214 out**.
+- What drove it: the **system prompt**, not the user. It's paid on every call, so it's my biggest cost lever.
+- Why there's no long user input: the AI route only accepts a roster ID, and the facts sent are capped at 1,000 characters. Nobody can paste a giant input, so a "long input" case can't happen by design.
+- Cost: **~$0.0002/call, ~$0.19 per 1,000 calls** (Haiku 5.5 at $0.10 / $0.50 per 1M tokens). Cheaper than I expected.
+- Cost/limit consideration: caching narrations (parked for W7) would make repeat visits free and cut rate-limit risk.
+**Commit:**
+
+### Day 3 · Govern answers
+**Where did I use AI?** Two places. In the **build**: Claude Code wrote the code while I planned, reviewed every diff, tested, and committed. In the **product**: Claude Haiku 5.5 writes each narration live. Taglines are AI-drafted copy that I checked by hand.
+**What did I check?** Every diff before accepting it. All 21 Wikidata IDs, looked up live and spot-checked (an AI-memory ID for Lugosi was wrong). Break-it tests: empty, too long, gibberish, not on the tour, Elvira, a fake ID, and an AI-down test. All of it is logged above.
+**What would I tell a user?** The facts are from Wikidata and the story is written by AI. Every card says **"Facts from Wikidata · Narration by AI,"** so nobody has to guess.
+
+### Day 3 · Project one-liner
+**AI narration of horror legends' graves · failure mode: AI invents facts about a real person · guardrail: Wikidata is the only fact source, and every card labels facts vs. AI narration.**
