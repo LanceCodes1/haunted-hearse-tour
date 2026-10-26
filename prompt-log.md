@@ -677,7 +677,7 @@ Append a short log entry.
 - Why there's no long user input: the AI route only accepts a roster ID, and the facts sent are capped at 1,000 characters. Nobody can paste a giant input, so a "long input" case can't happen by design.
 - Cost: **~$0.0002/call, ~$0.19 per 1,000 calls** (Haiku 5.5 at $0.10 / $0.50 per 1M tokens). Cheaper than I expected.
 - Cost/limit consideration: caching narrations (parked for W7) would make repeat visits free and cut rate-limit risk.
-**Commit:**
+**Commit:** `8bb235d` Fill commit hashes and add W6 lab wrap-up
 
 ### Day 3 · Govern answers
 **Where did I use AI?** Two places. In the **build**: Claude Code wrote the code while I planned, reviewed every diff, tested, and committed. In the **product**: Claude Haiku 5.5 writes each narration live. Taglines are AI-drafted copy that I checked by hand.
