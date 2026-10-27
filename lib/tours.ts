@@ -1,5 +1,6 @@
 // Back end only: checks a tour before it's saved. Shared by the tours API and (later) the AI planner,
 // so both follow the exact same rules.
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { Persona } from "@/lib/generated/prisma/enums";
 import { ROSTER } from "@/lib/roster";
 
@@ -38,4 +39,31 @@ export function validateTour(input: unknown): TourCheck {
   if (typeof persona !== "string" || !PERSONAS.includes(persona)) return { ok: false, message: "Pick a narrator for your tour." };
 
   return { ok: true, tour: { name: cleanName, legendIds, persona: persona as Persona } };
+}
+
+// Shown when Neon is asleep or unreachable: users get plain language, the raw error stays in the log
+export const DB_DOWN_MESSAGE = "The crypt is locked right now. Try again in a moment.";
+
+// 6 random bytes = 8 URL-safe characters: short enough to share, about 281 trillion options so nobody can guess one
+export function newTourId(): string {
+  return randomBytes(6).toString("base64url");
+}
+// Anything that doesn't look like one of our IDs is turned away before we ask the database
+export const TOUR_ID_PATTERN = /^[A-Za-z0-9_-]{8}$/;
+
+// 16 random bytes: far too long to guess, so only the person we hand it to (the creator) can delete
+export function newDeleteCode(): string {
+  return randomBytes(16).toString("base64url");
+}
+
+// Only this fingerprint is stored. Someone reading the database still can't work backwards to the code.
+export function hashDeleteCode(code: string): string {
+  return createHash("sha256").update(code).digest("hex");
+}
+
+// Constant-time compare: the response takes the same time whether a guess is close or not, so timing leaks nothing
+export function deleteCodeMatches(code: string, storedHash: string): boolean {
+  const given = Buffer.from(hashDeleteCode(code), "hex");
+  const stored = Buffer.from(storedHash, "hex");
+  return given.length === stored.length && timingSafeEqual(given, stored);
 }

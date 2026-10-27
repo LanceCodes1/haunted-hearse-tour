@@ -780,3 +780,13 @@ Keep each phase small enough for one commit.
 - Persona allow-list comes from the Prisma enum. Missing or null defaults to Mortimer; an invalid value is rejected.
 **Verified:** `npx tsc --noEmit` exit 0, `npm run lint` exit 0 (re-run after the null change). Behavior is tested with curl in Step 2.
 **Mistake caught:** First draft rejected a missing persona even though the database defaults to Mortimer, so the two layers disagreed. Changed it so missing or null defaults to Mortimer and invalid gets rejected.
+
+### 2026-10-27 — Phase 1b Step 2: Tour routes (create / read / delete)
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 1b, Step 2: the three tour routes (POST create, GET by id, DELETE with delete code) from the plan. Propose with WHY comments, show the diff, and give me the curl tests. Stop after Step 2.
+**Why:** Saved tours need a back end: create a tour with a shareable ID, read it back, and let only its creator delete it.
+**Result:**
+- POST /api/tours validates with validateTour, saves the tour, and returns the id + a one-time delete code (only its SHA-256 hash is stored).
+- GET /api/tours/[id] returns the tour without the hash. DELETE needs the right x-delete-code header (constant-time check).
+**Verified:** tsc + lint exit 0. 21 curl tests passed: create/read (incl. trimmed name, missing/null persona → mortimer), all 8 validation messages (400), delete with no/wrong code (403), right code (200), then 404. Test tours cleaned up; no errors in the server log.
+**Mistake caught:** A comment in lib/tours.ts got split by an accidental Enter in the editor. Caught in git diff and rejoined so the commit only has Step 2 work.

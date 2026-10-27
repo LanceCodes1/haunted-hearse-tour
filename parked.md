@@ -16,6 +16,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Phase 2 CRUD moved to W7:** saving a tour route with Prisma + Neon. Missed the Thursday 3 PM checkpoint.
 - Graves Visited counter (site-wide vs per-visitor undecided).
 - **Pin older dependencies:** `@anthropic-ai/sdk`, `leaflet`, `tailwindcss`, `typescript`, `eslint`, and the `@types/*` packages still use `^` ranges. Pin them to exact versions (no rc/beta/canary).
+- **Stray lockfile in home folder:** `next dev` warns about a `package-lock.json` in `/Users/lancegonzalez`, outside this repo. Check what created it and remove it (or set `turbopack.root`) before the Vercel deploy.
 
 ## Showcase (weekend)
 
