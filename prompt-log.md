@@ -790,3 +790,14 @@ Keep each phase small enough for one commit.
 - GET /api/tours/[id] returns the tour without the hash. DELETE needs the right x-delete-code header (constant-time check).
 **Verified:** tsc + lint exit 0. 21 curl tests passed: create/read (incl. trimmed name, missing/null persona → mortimer), all 8 validation messages (400), delete with no/wrong code (403), right code (200), then 404. Test tours cleaned up; no errors in the server log.
 **Mistake caught:** A comment in lib/tours.ts got split by an accidental Enter in the editor. Caught in git diff and rejoined so the commit only has Step 2 work.
+
+### 2026-10-27 — Early deploy: local build + Vercel project
+**Tool:** Claude Code (manual mode) + Vercel dashboard (Lance)
+**Prompt:** Hold Phase 2. We do the early deploy first, as approved. Walk me through it one step at a time: (1) which env vars I add in Vercel and where, (2) confirming the week7-gate preview deploy builds, (3) a smoke test on the live preview URL with one curl create/read/delete. You don't touch any secrets. I paste them into Vercel myself. / Follow-ups: Next: run npm run build locally, then get week7-gate deployed as a Preview… / Correction: there's no week7-gate preview yet… Add these 3 lines to parked.md… Propose the commit, then push to week7-gate so Vercel builds the preview.
+**Why:** Deploy early so Vercel or Prisma build problems show up days before the gate, not the night before.
+**Result:**
+- Lance created the Vercel project and set DATABASE_URL, DATABASE_URL_POOLED and ANTHROPIC_API_KEY for Production + Preview. main is live and narration works.
+- Local `npm run build` passed: tours routes are dynamic (ƒ), so nothing reads the DB at build time.
+- Parked: custom domain, turning preview protection back on, per-IP rate limiting.
+**Verified:** `npm run build` exit 0. Production narration checked live by Lance. Preview build + smoke test come next, after this push.
+**Mistake caught:** I reported the week7-gate preview as Ready, but Vercel only had the main deploy. The branch was pushed before the project existed, so Vercel never saw it. Caught by checking the Deployments list; this push triggers the preview.
