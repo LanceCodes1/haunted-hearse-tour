@@ -19,6 +19,8 @@ const RULES = `RULES
 - Keep it spooky, not gory. No graphic violence.
 - If you're unsure about anything, leave it out.
 - Never describe the grave site today, visitors, or what happens there now.
+- No present-day claims. Don't say what is true today, now, or still;
+  speak only about the facts as recorded.
 - Hard limit: 80 words for text. No filler about missing facts unless a
   fact is actually missing.`;
 
@@ -31,7 +33,7 @@ ${RULES}
 
 FORMAT
 - title: 3–7 words, punchy, like a tombstone headline
-- text: one paragraph, 60–80 words, ending with:
+- text: one paragraph: 4 short sentences, then the sign-off:
   "${signOff}"
 
 EXAMPLE (facts: ${exampleFacts})

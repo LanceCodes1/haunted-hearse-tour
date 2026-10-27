@@ -10,6 +10,7 @@ const MODEL = "claude-haiku-5-5";
 const MAX_INPUT_CHARS = 1000; // cost guard: never send more than this to the AI
 const MAX_OUTPUT_TOKENS = 400; // cost guard: hard cap on how much the AI can write
 const AI_TIMEOUT_MS = 10_000; // give up on the AI after 10 seconds
+const MAX_WORDS = 80; // the prompt asks for 4 short sentences; this is the code check that makes 80 a real limit
 
 // Haiku 5.5 prices per 1 million tokens (prompts under 100K tokens)
 const INPUT_PRICE_PER_M = 0.1;
@@ -103,6 +104,13 @@ export async function GET(request: NextRequest) {
     const narration = parseNarration(raw);
     if (!narration) {
       console.error("[api/narrate] AI output didn't match the expected shape:", raw);
+      return Response.json({ ...facts, narration: null, narrationError: "Our tour guide lost their voice. Here are the facts for now." });
+    }
+
+    // Bad output check: over-long narrations are dropped, not trimmed (trimming would cut off the sign-off)
+    const words = narration.text.split(/\s+/).length;
+    if (words > MAX_WORDS) {
+      console.error(`[api/narrate] Narration too long (${words} words, limit ${MAX_WORDS}), dropped`);
       return Response.json({ ...facts, narration: null, narrationError: "Our tour guide lost their voice. Here are the facts for now." });
     }
 

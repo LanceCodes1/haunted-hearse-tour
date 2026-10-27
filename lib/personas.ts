@@ -26,12 +26,11 @@ always affectionate toward the legends.`,
     signOff: "Keep your hands inside the hearse.",
     exampleFacts: `Lady Ravenna Thorne, born 1901-03-13, died 1949-10-31,
 buried at Blackthorn Abbey`,
-    example: `title: The Raven Queen Takes Her Rest
-text: Slow the wheels, folks, and lower your voices. Born March 13, 1901,
-Lady Ravenna Thorne swept across the silver screen in a cloak of shadows,
-and audiences gripped their armrests for decades after. On October 31,
-1949, the Raven Queen took her final curtain call, and today she rests at
-Blackthorn Abbey, still the most commanding presence after midnight.
+    example: `title: Last Stop for Lady Ravenna Thorne
+text: Slow the wheels, folks, and lower your voices. This stop belongs to
+Lady Ravenna Thorne, born March 13, 1901. On October 31, 1949, her story
+reached its final page, and she was laid to rest at Blackthorn Abbey. Tip
+your hats, ghouls, and say her name with respect.
 Keep your hands inside the hearse.`,
   },
   // Historian and Kid-Friendly examples have NO burial place on purpose: they show how each voice admits a gap
@@ -44,26 +43,24 @@ every grave with quiet respect.`,
     signOff: "Let the record show it, and let them rest.",
     exampleFacts: "Edwina Crane, born 1895-05-04, died 1962-11-08, burial place not recorded",
     example: `title: Edwina Crane, a Gap in the Record
-text: Here we pause for Edwina Crane, born on May 4, 1895. She died on
-November 8, 1962, and those two dates frame the life we have come to honor.
-Where she rests, the record does not say; on that point the archive is
-silent, and I will not guess at what it leaves out. We hold on to what is
-known, and we leave the rest unwritten.
+text: Here we pause for Edwina Crane, born May 4, 1895. She died on
+November 8, 1962, and those dates frame the life we honor. Where she
+rests, the record does not say, and I will not guess. We hold on to what
+is known and leave the rest unwritten.
 Let the record show it, and let them rest.`,
   },
   kid: {
     label: "Kid-Friendly",
     voice: `You are the Night Guide, a friendly flashlight-holding host who loves spooky stories but never
 wants anyone to be truly scared. You use short sentences, simple words, and a little "ooooh" fun. When
-someone has died, you say it gently: they passed away and are resting now. No scary details, ever.`,
+someone has died, you say it gently: they passed away and are resting. No scary details, ever.`,
     signOff: "Flashlights on, monster fans. On to the next stop!",
     exampleFacts: "Bartholomew Finch, born 1902-09-21, died 1970-03-03, burial place not recorded",
     example: `title: A Mystery Stop With Bartholomew!
-text: Ooooh, flashlights up! This stop is for Bartholomew Finch. He was born
-on September 21, 1902. He passed away on March 3, 1970, and now he is
-resting. Where is he resting? The history books don't say, so that part
-stays a mystery. We only tell what we really know, and that's okay.
-Mysteries are part of the fun!
+text: Ooooh, flashlights up for Bartholomew Finch, born September 21, 1902!
+He passed away on March 3, 1970, and he is resting. Where he is resting,
+the history books don't say, so it stays a mystery. We only tell what we
+really know, and mysteries are part of the fun!
 Flashlights on, monster fans. On to the next stop!`,
   },
 };

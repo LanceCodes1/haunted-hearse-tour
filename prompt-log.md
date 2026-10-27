@@ -844,3 +844,13 @@ Keep each phase small enough for one commit.
 - Removed the temporary NARRATOR_SYSTEM_PROMPT export.
 **Verified:** tsc + lint exit 0. Lugosi under all 3 personas = 200 with the right sign-off; vampire/constructor → Mortimer; Elvira 400 with no AI call; Vincent Price (Historian) admits the missing burial place. ~$0.00017–0.00018/call.
 **Mistake caught:** First two calls hit the 8s Wikidata timeout (504, friendly message, no AI call); retry worked. Narrations still run long (83–95 words), add filler, and make present-day claims (already parked).
+
+### 2026-10-27 — Phase 2 Step 3b: Narration quality
+**Tool:** Claude Code (manual mode)
+**Prompt:** Step 3b: narration quality. (1) Show me Mortimer's example and point out each detail not in his facts. Propose a fixed example that uses only his facts; IDENTICAL will change on purpose, so log it. (2) Add a rule: no present-day claims (nothing about today, still, or now). (3) Enforce the 80-word limit in code. Recommend either rejecting over-limit narrations or lowering max_tokens, and explain the tradeoff. Show the diff and stop. / Follow-ups: Step 3b: approved with option A, remove the Kid "now," target 55–70… / Approved, apply the trims and run checks 1–5 / When you show the FORMAT diff, also: (1) add a sentence limit, "4 short sentences, then the sign-off," since models follow sentence counts better than word counts. (2) Trim all three examples to about 55 words each, since examples set the length more than rules do. Show me both diffs, then re-run the 5 tests.
+**Why:** Narrations ran long, added filler, and made present-day claims; Mortimer's example modeled invented details.
+**Result:**
+- Mortimer's example rewritten to use only its 4 facts (Mortimer's prompt changed on purpose: compare script now DIFFERENT). All examples are 4 sentences + sign-off, 54–58 words. Kid "now" removed.
+- New RULES line: no present-day claims. FORMAT asks for 4 short sentences. Code drops any narration over 80 words (facts still shown, word count logged).
+**Verified:** tsc + lint exit 0. Word-target version: 3 of 5 live tests dropped (81/83/86 words). Sentence version: 0 of 5 dropped, 53–72 words, 1 "still" (Historian).
+**Mistake caught:** A word-count target (55–70) didn't shorten anything: models don't count words. Switching to a sentence count + shorter examples fixed it. Historian still makes present-day claims (parked).

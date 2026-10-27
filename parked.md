@@ -2,7 +2,7 @@
 
 Ideas and fixes saved for later. Not in this week's build.
 
-- **Narration runs long:** it comes out around 86 words, over the prompt's 60–80 target (Vincent Price hit ~100 in a later test). W7 fix: a hard word-count check in the narrate route that drops or flags any narration over 80 words (today's shape check allows up to 1,200 characters, about 200 words).
+- **Narration runs long:** it comes out around 86 words, over the prompt's 60–80 target (Vincent Price hit ~100 in a later test). W7 fix: a hard word-count check in the narrate route that drops or flags any narration over 80 words (today's shape check allows up to 1,200 characters, about 200 words). (done in Phase 2 Step 3b)
 - **Filler line:** the narration adds "the record books go quiet" even when no fact is missing.
 - **Notable-work field from Wikidata (W7):** pull a legend's famous work from Wikidata instead of the AI's general knowledge.
 - **Cache Wikidata answers:** don't ask Wikidata again for the same legend.
