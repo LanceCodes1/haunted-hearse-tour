@@ -770,3 +770,13 @@ Keep each phase small enough for one commit.
 **Mistake caught:**
 - Prisma's update box suggested 8.0.0-rc.27. Ignored, because the rules say no rc versions.
 - Asked to stop Studio, but it had never been started; caught by checking for the process instead of assuming.
+
+### 2026-10-27 — Phase 1b Step 1: Tour validation (lib/tours.ts)
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 1b, Step 1 only: lib/tours.ts with the shared validation from the plan (name 1–60 chars; 1 to MAX_LEGENDS legend IDs, each on the public roster, no duplicates; persona on the allow-list). Export MAX_LEGENDS = 6 as one constant. Propose the edit with WHY comments, show me the diff, and tell me how I'll test it. Stop after Step 1. / Follow-ups: Approve with one change: missing persona → default to "mortimer"; invalid persona (like "vampire") → reject with "Pick a narrator for your tour." Add a WHY comment explaining missing vs invalid. Then save and propose tsc + lint. / Treat null as missing too (default to Mortimer). Re-run tsc and lint after the change, then propose the log entry and commit message.
+**Why:** One shared set of rules for saving a tour, so the API and the AI planner can't disagree about what a valid tour is.
+**Result:**
+- `validateTour()` checks name (1–60), legends (1–MAX_LEGENDS, public roster only, no repeats) and persona, and returns a cleaned tour or one plain-language message.
+- Persona allow-list comes from the Prisma enum. Missing or null defaults to Mortimer; an invalid value is rejected.
+**Verified:** `npx tsc --noEmit` exit 0, `npm run lint` exit 0 (re-run after the null change). Behavior is tested with curl in Step 2.
+**Mistake caught:** First draft rejected a missing persona even though the database defaults to Mortimer, so the two layers disagreed. Changed it so missing or null defaults to Mortimer and invalid gets rejected.
