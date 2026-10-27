@@ -686,3 +686,65 @@ Append a short log entry.
 
 ### Day 3 · Project one-liner
 **AI narration of horror legends' graves · failure mode: AI invents facts about a real person · guardrail: Wikidata is the only fact source, and every card labels facts vs. AI narration.**
+
+---
+
+## Week 7: Phase 2 gate
+
+### 2026-10-26 — Phase 2 gate plan
+**Tool:** Claude Code (plan mode)
+**Prompt:** Plan only, no code yet. We're extending Haunted Hearse Tour for my Phase 2 gate
+(Thursday). Read README.md, parked.md, and CLAUDE.md first.
+
+Gate non-negotiables: deployed on Vercel, Postgres database (Prisma + Neon),
+reliable AI features with guardrails, I can explain every part.
+
+Build in this order. Each phase ends working + committed before the next starts:
+
+MUST
+1. Database: Prisma (latest STABLE version) + Neon. A Tour model:
+   id (short shareable id), name, legendIds (list of roster IDs), persona,
+   createdAt. Create/read/delete saved tours.
+2. Narrator personas: Campy Mortimer (default), Scholarly Historian,
+   Kid-Friendly. Persona changes only the system prompt; same guardrails and
+   Wikidata-facts-only rule for all three.
+3. AI Tour Planner: user describes what they want in plain words; AI returns a
+   route chosen ONLY from the 20-legend roster (validate every ID server-side,
+   structured JSON, length caps). User can save it as a Tour.
+4. Shareable tour page at /tour/[id].
+5. Leaflet must load client-side only (dynamic import, ssr:false) so the
+   Vercel build doesn't fail.
+
+SHOULD
+6. Voice: a Play button that reads the narration aloud with a different
+   original voice per persona (no imitating real or famous characters).
+   Audio generates only on click; fall back to the browser's built-in voice if
+   the TTS API fails or times out. Log cost per play.
+7. Legend hover cards: expand and push neighbors aside instead of overlapping
+   names (use the Motion library).
+8. Lightning flash synced to the flickering bulb + thunder sound behind a
+   sound toggle that's OFF by default. Respect prefers-reduced-motion.
+
+STRETCH
+9. "Graves Visited" counter from the database.
+
+For the plan: list the files you'll touch per phase, new env variables needed,
+packages to install (with versions), and the risks for deploying on Vercel.
+Keep each phase small enough for one commit.
+**Why:** Plan the whole Phase 2 build before writing code, so each phase is one small, testable commit.
+**Result:**
+- Plan approved: 12 small phases (1a–9), with files, env variables, pinned package versions, and 10 Vercel risks. My choices: ElevenLabs voice, creator-only delete code, Stretch (counter) parked, thunder generated in code.
+- Leaflet was already client-only (`dynamic`, `ssr: false`), so Phase 5 is a check plus the first deploy.
+**Commit:**
+**Mistake caught:** npm's "latest" tag for `prisma` is a release candidate (8.0.0-rc.27), not stable. The plan pins stable 7.10.1. Also, the DB URLs were in `.env` instead of `.env.local`.
+
+### 2026-10-26 — Step 0: Working rules in CLAUDE.md
+**Tool:** Claude Code (manual mode)
+**Prompt:** Step 0 (before 1a): Propose adding this section to CLAUDE.md, show me the diff, and wait for my approval: [pasted "## Working rules" section]. Follow-ups: "Overlaps: (a) replace the old prompt-log template with the new one (Tool / Prompt / Why / Result / Verified / Mistake caught; drop Commit:). (b) Remove the old "one-line comments on key logic" line. One rule per topic, no duplicates." / "Prompt-log move: approved, keep the rule in the "## Prompt log" section only. Planning trim: rejected. Restore the Planning section exactly as it was."
+**Why:** Lock in manual mode, no git/npm/prisma runs by Claude, one commit per step, and pinned versions before the Phase 2 build starts.
+**Result:**
+- Added "## Working rules". Removed 4 "How I work" lines that duplicated it. Prompt-log template now has Verified instead of Commit.
+- Planning section unchanged (Claude's trim was rejected).
+- Also: fixed the plan-log clause ("Stretch (counter) parked"), marked Phases 6–8 "Roadmap (not approved)" in the plan, and moved the counter to parked.md.
+**Verified:** Reviewed the final CLAUDE.md diff before saving.
+**Mistake caught:** Claude's plan entry said I chose a site-wide counter. I hadn't, so the counter is now parked as undecided. Claude also tried to trim the Planning section beyond what I asked.

@@ -2,12 +2,20 @@
 
 ## How I work
 - I'm early-career and building for a class demo. Explain in plain language.
-- One small step at a time. Stop after each working piece so I can test and commit.
 - After each change: 3–5 bullets max (what changed, front end or back end, why).
-- Add one-line comments on key logic so I can explain it in my demo.
-- Build only what I ask. New ideas go in a "Parked" list, not into the code.
-- Never commit for me. I run git myself.
 - Read before you edit. Keep changes small so the diff is easy to review.
+
+## Working rules
+- Manual mode: propose every edit; I approve each one.
+- Never run git, npm install, or prisma commands. Give me the command
+  plus a one-line plain-language explanation; I run it.
+- Small steps: each step = one commit with one purpose. When a step is
+  ready, tell me the commit message and stop for my test.
+- Comments: 1–2 lines explaining WHY, not what, anywhere I might be
+  asked "what's this?" in a demo.
+- Scope: build only the current step. New ideas go in parked.md.
+- Pinned versions only. No rc, beta, or canary.
+- If anything is unclear, ask me instead of assuming.
 
 ## Secrets
 - API keys live in `.env.local` only. Never in front-end code, never committed.
@@ -45,14 +53,15 @@
 - Ask me when a decision is mine. Don't guess on design or scope.
 
 ## Prompt log
-- After each step, append an entry to `prompt-log.md` (this exact filename) before I commit:
+- One entry per step in `prompt-log.md` (this exact filename), append-only.
+  Short. No file dumps or play-by-play.
 
   ### [Date] — [Step name]
   **Tool:**
   **Prompt:** (my prompt, word for word)
   **Why:**
   **Result:** (2–3 bullets)
-  **Commit:** (leave blank; I fill it in)
+  **Verified:**
   **Mistake caught:** (if any)
 
 @AGENTS.md
