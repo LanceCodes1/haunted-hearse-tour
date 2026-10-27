@@ -834,3 +834,13 @@ Keep each phase small enough for one commit.
 **Mistake caught:**
 - Accidentally sent my API key into the session by highlighting a line in .env.local; rotated it in Anthropic, .env.local, and Vercel.
 - Example drafts named movies not in their facts, which would teach the model to invent filmographies; caught in review and fixed.
+
+### 2026-10-27 — Phase 2 Step 3: Narrate route uses personas
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 2, Step 3 only: /api/narrate reads ?persona=, checks it against the allow-list (missing or invalid → mortimer), and passes it to buildSystemPrompt. Guards, schema, timeout, and cost log stay the same. Show me the diff and the test plan: the same legend under all 3 personas, a bad persona falling back to Mortimer, Elvira still rejected. Stop after Step 3. / Follow-up: Approved with persona in cost log and test #8
+**Why:** Let each tour stop be narrated in the chosen voice while the facts and guardrails stay identical.
+**Result:**
+- toPersona() turns ?persona= into a real persona (missing/unknown/"constructor" → Mortimer); route uses buildSystemPrompt(persona); cost log shows persona.
+- Removed the temporary NARRATOR_SYSTEM_PROMPT export.
+**Verified:** tsc + lint exit 0. Lugosi under all 3 personas = 200 with the right sign-off; vampire/constructor → Mortimer; Elvira 400 with no AI call; Vincent Price (Historian) admits the missing burial place. ~$0.00017–0.00018/call.
+**Mistake caught:** First two calls hit the 8s Wikidata timeout (504, friendly message, no AI call); retry worked. Narrations still run long (83–95 words), add filler, and make present-day claims (already parked).

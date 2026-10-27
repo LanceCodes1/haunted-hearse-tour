@@ -22,6 +22,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - Per-IP rate limiting.
 - **Neutral missing-fact phrase in shared RULES:** the rule's sample "the record books go quiet here" is Mortimer's voice. For now each persona shows its own missing-fact phrasing in its example. Changing RULES would also change Mortimer's prompt.
 - **Mortimer's example adds details not in its facts:** "swept across the silver screen in a cloak of shadows," the nickname "the Raven Queen," "audiences gripped their armrests for decades after," and "still the most commanding presence after midnight" (a present-day claim). It names no work, but it models inventing a career. Rewrite it to use only its 4 facts (this will change Mortimer's prompt, so re-test narration).
+- **All personas make present-day claims; tighten RULES or examples:** Phase 2 Step 3 tests showed "audiences still lean forward," "still raises gooseflesh decades later" (Mortimer) and "still stands as the figure against which later vampires are measured" (Historian).
 
 ## Showcase (weekend)
 

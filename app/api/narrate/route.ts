@@ -3,7 +3,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { connection, type NextRequest } from "next/server";
 import { WikidataError } from "@/lib/wikidata";
 import { getRosterFacts } from "@/lib/roster";
-import { NARRATOR_SYSTEM_PROMPT } from "@/lib/narratorPrompt";
+import { buildSystemPrompt } from "@/lib/narratorPrompt";
+import { toPersona } from "@/lib/personas";
 
 const MODEL = "claude-haiku-5-5";
 const MAX_INPUT_CHARS = 1000; // cost guard: never send more than this to the AI
@@ -43,6 +44,8 @@ function parseNarration(raw: string): Narration | null {
 
 export async function GET(request: NextRequest) {
   await connection(); // run on every request, never prerendered at build time
+  // Persona only picks the voice; the facts, guards, and limits below are the same for all three
+  const persona = toPersona(request.nextUrl.searchParams.get("persona"));
 
   // 1. Facts first: roster check, Wikidata, and living-person check. If any fails, the AI is never called.
   let facts;
@@ -76,17 +79,18 @@ export async function GET(request: NextRequest) {
           effort: "low",
           format: { type: "json_schema", schema: NARRATION_SCHEMA }, // force the title + text shape
         },
-        system: NARRATOR_SYSTEM_PROMPT,
+        system: buildSystemPrompt(persona),
         messages: [{ role: "user", content: factsForAI }],
       },
       { timeout: AI_TIMEOUT_MS, maxRetries: 0 }, // no silent retries, so 10 seconds really means 10 seconds
     );
 
-    // Cost log: tokens used and estimated price, per call and per 1,000 calls
+    // Cost log: tokens used and estimated price, per call and per 1,000 calls.
+    // Persona is logged because each voice has a different-length prompt, so cost differs a little per persona.
     const { input_tokens, output_tokens } = response.usage;
     const cost = (input_tokens * INPUT_PRICE_PER_M + output_tokens * OUTPUT_PRICE_PER_M) / 1_000_000;
     console.log(
-      `[narrate] tokens in=${input_tokens} out=${output_tokens} · est $${cost.toFixed(6)}/call · $${(cost * 1000).toFixed(3)} per 1,000 calls`,
+      `[narrate] persona=${persona} tokens in=${input_tokens} out=${output_tokens} · est $${cost.toFixed(6)}/call · $${(cost * 1000).toFixed(3)} per 1,000 calls`,
     );
 
     // Bad output check: the AI must finish normally (not cut off, not refused)

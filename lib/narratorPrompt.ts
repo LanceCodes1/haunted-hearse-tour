@@ -6,7 +6,7 @@
 // - Campy tone that celebrates their work.
 // - Never mock how someone died.
 import type { Persona } from "@/lib/generated/prisma/enums";
-import { DEFAULT_PERSONA, PERSONAS } from "@/lib/personas";
+import { PERSONAS } from "@/lib/personas";
 
 // Shared by every persona: the voice can change, the fact rules can't
 const RULES = `RULES
@@ -37,6 +37,3 @@ FORMAT
 EXAMPLE (facts: ${exampleFacts})
 ${example}`; // multi-line string (backticks) so the prompt reads exactly as written
 }
-
-// Kept so /api/narrate works unchanged until the route step switches it to buildSystemPrompt
-export const NARRATOR_SYSTEM_PROMPT = buildSystemPrompt(DEFAULT_PERSONA);

@@ -67,3 +67,10 @@ Mysteries are part of the fun!
 Flashlights on, monster fans. On to the next stop!`,
   },
 };
+
+// Turns the ?persona= text from the URL into a real persona. Missing or unknown → Mortimer.
+// The narrate route falls back instead of rejecting: a bad link should still give a tour, just in the default voice.
+// Object.hasOwn (not `in`) so tricks like ?persona=constructor can't sneak through via built-in object keys.
+export function toPersona(value: string | null): Persona {
+  return value !== null && Object.hasOwn(PERSONAS, value) ? (value as Persona) : DEFAULT_PERSONA;
+}
