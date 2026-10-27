@@ -758,3 +758,15 @@ Keep each phase small enough for one commit.
 - Reworded the step rule: commit only after I test, and every commit is checked with `git log --oneline -1`.
 **Verified:** Step 0 landed as `d6f2fb9` and the tree was clean before 0b. Reviewed the final diff before saving.
 **Mistake caught:** My quote of the old rule didn't match the file exactly. Claude replaced the real two-line text.
+
+### 2026-10-26 — Phase 1a: Prisma + Neon + Tour table
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 1a. / Approved, run Part 1 installs. / Approved, apply the Part 2 edits. / Approved, run 1 (prisma generate). / Approved, run 2 (prisma migrate dev). / Approved, run 4 (npm run lint)
+**Why:** The gate needs a real Postgres database. This step sets up Prisma 7 + Neon and creates the Tour table that saved tours will use.
+**Result:**
+- Pinned prisma, @prisma/client, @prisma/adapter-neon 7.10.1 and dotenv 18.0.9. Added schema, prisma.config.ts, lib/db.ts, and postinstall generate.
+- Migration `20261027062746_add_tour` created the Persona enum and the Tour table in Neon.
+**Verified:** `prisma generate` OK, `migrate dev` reported the DB in sync, `npm run lint` clean, `npx tsc --noEmit` exit 0. Lance read migration.sql: Persona enum and 6 Tour columns confirmed. Studio check skipped.
+**Mistake caught:**
+- Prisma's update box suggested 8.0.0-rc.27. Ignored, because the rules say no rc versions.
+- Asked to stop Studio, but it had never been started; caught by checking for the process instead of assuming.

@@ -1,0 +1,25 @@
+// Database shape. Prisma 7 keeps the connection URL in prisma.config.ts, not here.
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma" // generated code, git-ignored; rebuilt by `prisma generate`
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Enum = the database itself refuses any persona outside these three
+enum Persona {
+  mortimer
+  historian
+  kid
+}
+
+model Tour {
+  id             String   @id                 // short shareable id made by our server, so links stay short
+  name           String   @db.VarChar(60)     // DB-level length cap, a second guard behind the API check
+  legendIds      String[]                     // roster Wikidata IDs in route order (a Postgres list column)
+  persona        Persona  @default(mortimer)
+  deleteCodeHash String                       // only a fingerprint of the delete code, so a DB leak can't delete tours
+  createdAt      DateTime @default(now())
+}
