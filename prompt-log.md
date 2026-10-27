@@ -748,3 +748,13 @@ Keep each phase small enough for one commit.
 - Also: fixed the plan-log clause ("Stretch (counter) parked"), marked Phases 6–8 "Roadmap (not approved)" in the plan, and moved the counter to parked.md.
 **Verified:** Reviewed the final CLAUDE.md diff before saving.
 **Mistake caught:** Claude's plan entry said I chose a site-wide counter. I hadn't, so the counter is now parked as undecided. Claude also tried to trim the Planning section beyond what I asked.
+
+### 2026-10-26 — Step 0b: Claude runs approved commands
+**Tool:** Claude Code (manual mode)
+**Prompt:** Change the CLAUDE.md working rule. Replace "Never run git, npm install, or prisma commands; give me the command and I run it" with: "Propose each command (git, npm, prisma) with a one-line plain-language explanation, wait for my approval, then run it and confirm the result. After every commit, run git log --oneline -1 to prove it landed." Show me the diff. / Follow-up: Reword "Small steps" to: "Each step = one commit with one purpose. When a step is ready and I've tested it, propose the commit message; after I approve, run the commit and confirm it with git log --oneline -1." 2) Own commit, "Step 0b." Also confirm the Step 0 commit actually landed. If it didn't, propose committing Step 0 first, then 0b. Show me the final diff, save, add the log entry, then propose the 0b commit.
+**Why:** I approve every command, but Claude runs it and proves the result, so there's no copy-paste gap (Step 0 looked committed when it wasn't).
+**Result:**
+- Replaced the "never run" rule with propose → approve → run → confirm.
+- Reworded the step rule: commit only after I test, and every commit is checked with `git log --oneline -1`.
+**Verified:** Step 0 landed as `d6f2fb9` and the tree was clean before 0b. Reviewed the final diff before saving.
+**Mistake caught:** My quote of the old rule didn't match the file exactly. Claude replaced the real two-line text.

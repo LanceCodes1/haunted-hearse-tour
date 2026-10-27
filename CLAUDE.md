@@ -7,10 +7,12 @@
 
 ## Working rules
 - Manual mode: propose every edit; I approve each one.
-- Never run git, npm install, or prisma commands. Give me the command
-  plus a one-line plain-language explanation; I run it.
-- Small steps: each step = one commit with one purpose. When a step is
-  ready, tell me the commit message and stop for my test.
+- Propose each command (git, npm, prisma) with a one-line plain-language
+  explanation, wait for my approval, then run it and confirm the result.
+  After every commit, run git log --oneline -1 to prove it landed.
+- Each step = one commit with one purpose. When a step is ready and I've
+  tested it, propose the commit message; after I approve, run the commit
+  and confirm it with git log --oneline -1.
 - Comments: 1–2 lines explaining WHY, not what, anywhere I might be
   asked "what's this?" in a demo.
 - Scope: build only the current step. New ideas go in parked.md.
