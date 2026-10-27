@@ -801,3 +801,13 @@ Keep each phase small enough for one commit.
 - Parked: custom domain, turning preview protection back on, per-IP rate limiting.
 **Verified:** `npm run build` exit 0. Production narration checked live by Lance. Preview build + smoke test come next, after this push.
 **Mistake caught:** I reported the week7-gate preview as Ready, but Vercel only had the main deploy. The branch was pushed before the project existed, so Vercel never saw it. Caught by checking the Deployments list; this push triggers the preview.
+
+### 2026-10-27 — Early deploy: preview smoke test
+**Tool:** Claude Code (manual mode) + Vercel dashboard (Lance)
+**Prompt:** Update: the Vercel env vars were never saved on import. I added all 3 for Production + Preview and redeployed both. Production narration works live. The week7-gate preview is Ready at https://haunted-hearse-tour-git-week7-gate-lance-codes-1.vercel.app and loads with no login. Approved, run curl calls 1–5 against the preview URL and report each status.
+**Why:** Prove the tours API works on Vercel + Neon, not just locally.
+**Result:**
+- week7-gate preview built and is Ready, with Prisma Client generated on Vercel.
+- Create 201 → read 200 (no hash) → wrong-code delete 403 → delete 200 → read 404. Test row cleaned up.
+**Verified:** All 5 curl calls returned the expected status against the live preview.
+**Mistake caught:** The env vars added on the Vercel import screen were never saved. Found when checking Settings; re-added all 3 for Production + Preview and redeployed.
