@@ -22,13 +22,9 @@ const RULES = `RULES
 - Hard limit: 80 words for text. No filler about missing facts unless a
   fact is actually missing.`;
 
-// Same made-up legend for every persona's example, so the examples differ only in voice
-const EXAMPLE_FACTS = `EXAMPLE (facts: Lady Ravenna Thorne, born 1901-03-13, died 1949-10-31,
-buried at Blackthorn Abbey)`;
-
 // Same order as the original prompt (voice → rules → format → example), so Mortimer's prompt is unchanged
 export function buildSystemPrompt(persona: Persona): string {
-  const { voice, signOff, example } = PERSONAS[persona];
+  const { voice, signOff, exampleFacts, example } = PERSONAS[persona];
   return `${voice}
 
 ${RULES}
@@ -38,7 +34,7 @@ FORMAT
 - text: one paragraph, 60–80 words, ending with:
   "${signOff}"
 
-${EXAMPLE_FACTS}
+EXAMPLE (facts: ${exampleFacts})
 ${example}`; // multi-line string (backticks) so the prompt reads exactly as written
 }
 

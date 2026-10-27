@@ -21,6 +21,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - Turn Vercel preview protection back on after the gate.
 - Per-IP rate limiting.
 - **Neutral missing-fact phrase in shared RULES:** the rule's sample "the record books go quiet here" is Mortimer's voice. For now each persona shows its own missing-fact phrasing in its example. Changing RULES would also change Mortimer's prompt.
+- **Mortimer's example adds details not in its facts:** "swept across the silver screen in a cloak of shadows," the nickname "the Raven Queen," "audiences gripped their armrests for decades after," and "still the most commanding presence after midnight" (a present-day claim). It names no work, but it models inventing a career. Rewrite it to use only its 4 facts (this will change Mortimer's prompt, so re-test narration).
 
 ## Showcase (weekend)
 

@@ -821,3 +821,16 @@ Keep each phase small enough for one commit.
 - lib/narratorPrompt.ts now has shared RULES + buildSystemPrompt(persona); NARRATOR_SYSTEM_PROMPT still exported, so /api/narrate is unchanged.
 **Verified:** tsc + lint exit 0. Compare script: old prompt vs buildSystemPrompt("mortimer") → IDENTICAL (1,685 chars).
 **Mistake caught:** My Step 1 prompt asked only for voice + sign-off placeholders. Claude flagged that each persona also needs its own example (otherwise it copies Mortimer's carnival style), so example placeholders were added.
+
+### 2026-10-27 — Phase 2 Step 2: Historian + Kid-Friendly personas
+**Tool:** Claude Code (manual mode)
+**Prompt:** [pasted "Persona drafts": Historian + Kid-Friendly voice, sign-off, example] / Follow-ups: Where are we on Phase 2 Step 2? Show me the diff for the voices, sign-offs, and exampleFacts change, plus your example drafts for the Historian and Kid-Friendly. Don't save anything until I approve. / Not approved yet. Both examples name a movie ("The Veiled Lantern," "Swamp Shadows") that isn't in their exampleFacts… Show me the revised diff. / Approved. Save both files and propose the checks. Also answer my earlier question: does Mortimer's example name a work or include an opinion that's not in his exampleFacts? Don't change it, just tell me. If it does, add a line to parked.md.
+**Why:** Give the Historian and Night Guide their own voices while every persona keeps the same Wikidata-only RULES.
+**Result:**
+- Historian + Kid-Friendly voices and sign-offs added; each persona now has its own exampleFacts (fictional legend, burial place missing on purpose) so the example shows an honest gap.
+- Examples use only their 4 facts: no works, no places, no opinions.
+- Parked: Mortimer's example adds details not in its facts (career, nickname, present-day claim). Not changed.
+**Verified:** tsc + lint exit 0. Compare script: Mortimer still IDENTICAL (1,685 chars); Historian + Kid prompts printed and read in full.
+**Mistake caught:**
+- Accidentally sent my API key into the session by highlighting a line in .env.local; rotated it in Anthropic, .env.local, and Vercel.
+- Example drafts named movies not in their facts, which would teach the model to invent filmographies; caught in review and fixed.
