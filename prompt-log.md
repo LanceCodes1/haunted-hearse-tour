@@ -811,3 +811,13 @@ Keep each phase small enough for one commit.
 - Create 201 → read 200 (no hash) → wrong-code delete 403 → delete 200 → read 404. Test row cleaned up.
 **Verified:** All 5 curl calls returned the expected status against the live preview.
 **Mistake caught:** The env vars added on the Vercel import screen were never saved. Found when checking Settings; re-added all 3 for Production + Preview and redeployed.
+
+### 2026-10-27 — Phase 2 Step 1: Personas + shared prompt rules
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 2, Step 1 only: create lib/personas.ts and split lib/narratorPrompt.ts into the shared RULES block plus buildSystemPrompt(persona), as in the plan. Mortimer's text stays exactly as it is now. Leave clearly marked placeholders for the Historian and Kid-Friendly voice paragraphs and sign-offs. I'll write those. No route or UI changes yet. Show me the diff and stop. / Follow-up: Approved. 1) I'll write an example for each persona too. Keep the EXAMPLE placeholders. 2) Park the neutral-phrase idea in parked.md. I'll show each persona's own missing-fact phrasing in its example instead. Save, then propose tsc, lint, and the IDENTICAL check.
+**Why:** Personas may change only the voice. One shared RULES block keeps the Wikidata-only fact rules the same for every narrator.
+**Result:**
+- New lib/personas.ts: Mortimer moved over unchanged; Historian + Kid-Friendly have [[LANCE WRITES]] placeholders (voice, sign-off, example).
+- lib/narratorPrompt.ts now has shared RULES + buildSystemPrompt(persona); NARRATOR_SYSTEM_PROMPT still exported, so /api/narrate is unchanged.
+**Verified:** tsc + lint exit 0. Compare script: old prompt vs buildSystemPrompt("mortimer") → IDENTICAL (1,685 chars).
+**Mistake caught:** My Step 1 prompt asked only for voice + sign-off placeholders. Claude flagged that each persona also needs its own example (otherwise it copies Mortimer's carnival style), so example placeholders were added.

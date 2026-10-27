@@ -20,6 +20,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - Custom domain after the gate.
 - Turn Vercel preview protection back on after the gate.
 - Per-IP rate limiting.
+- **Neutral missing-fact phrase in shared RULES:** the rule's sample "the record books go quiet here" is Mortimer's voice. For now each persona shows its own missing-fact phrasing in its example. Changing RULES would also change Mortimer's prompt.
 
 ## Showcase (weekend)
 
