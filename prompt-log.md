@@ -854,3 +854,13 @@ Keep each phase small enough for one commit.
 - New RULES line: no present-day claims. FORMAT asks for 4 short sentences. Code drops any narration over 80 words (facts still shown, word count logged).
 **Verified:** tsc + lint exit 0. Word-target version: 3 of 5 live tests dropped (81/83/86 words). Sentence version: 0 of 5 dropped, 53–72 words, 1 "still" (Historian).
 **Mistake caught:** A word-count target (55–70) didn't shorten anything: models don't count words. Switching to a sentence count + shorter examples fixed it. Historian still makes present-day claims (parked).
+
+### 2026-10-27 — Phase 2 Step 4: Narrator picker
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 2, Step 4: the narrator picker. Send labels only to the browser, default to Mortimer, and have visit() add &persona=. Show the diff and stop. / Follow-ups: …and add "re-narrate on switch" to parked.md. / Approved. Save Step 4, then run tsc, lint, and the curl check that the prompt text isn't in the page. / One addition to Step 4: the intro card's step 3 still says "Hear Mortimer's tale." Change it to "Hear your narrator's tale and see the grave on the map." Then propose the log entry, commit, and push.
+**Why:** Let visitors choose the narrator's voice without ever sending the prompt text to the browser.
+**Result:**
+- page.tsx (server) passes only { id, label } + the default (Mortimer) to TourGuide; the picker uses hidden radio buttons so the keyboard works; visit() adds &persona=.
+- Intro card step 3 now says "your narrator". Parked: re-narrate on switch.
+**Verified:** tsc + lint exit 0. Curl check: all 4 labels found; 8 prompt phrases absent from the page and its 18 JS files. Browser test (Lance): Mortimer is the default, each narrator gives its own sign-off on Lugosi, the arrow keys switch narrators, and the intro now says "your narrator."
+**Mistake caught:** The intro card still named Mortimer after personas existed (caught by Lance in the browser test).

@@ -4,7 +4,7 @@ import Image from "next/image";
 const STEPS = [
   "Pick a legend or search a name",
   "Get the real facts from Wikidata",
-  "Hear Mortimer's tale and see the grave on the map",
+  "Hear your narrator's tale and see the grave on the map",
 ];
 
 export default function IntroPanel() {

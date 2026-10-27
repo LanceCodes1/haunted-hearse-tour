@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import type { Persona } from "@/lib/generated/prisma/enums";
 import IntroPanel from "./IntroPanel";
 import { checkSearch, type LivingName } from "./searchCheck";
 
@@ -13,6 +14,7 @@ const TourMap = dynamic(() => import("./TourMap"), {
 });
 
 export type TourName = { id: string; name: string; group: "LA Legends" | "Beyond LA"; tagline: string };
+export type NarratorOption = { id: Persona; label: string }; // just a name for the button, never the prompt
 
 // What /api/narrate sends back: facts + narration, or just a friendly error
 type TourStop = {
@@ -38,7 +40,17 @@ function formatDate(date?: string | null): string {
   return new Date(date).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long", day: "numeric" });
 }
 
-export default function TourGuide({ tour, living }: { tour: TourName[]; living: LivingName[] }) {
+export default function TourGuide({
+  tour,
+  living,
+  narrators,
+  defaultNarrator,
+}: {
+  tour: TourName[];
+  living: LivingName[];
+  narrators: NarratorOption[];
+  defaultNarrator: Persona;
+}) {
   // Screen state: chosen legend, its card data, loading flag, search text, search message, and match buttons
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stop, setStop] = useState<TourStop | null>(null);
@@ -46,6 +58,7 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
   const [query, setQuery] = useState("");
   const [searchMessage, setSearchMessage] = useState<string | null>(null);
   const [matches, setMatches] = useState<TourName[]>([]);
+  const [persona, setPersona] = useState<Persona>(defaultNarrator); // which voice narrates the next stop
   const cardRef = useRef<HTMLDivElement>(null);
 
   // When a card finishes loading, scroll it into view (no smooth scroll if the user asked for less motion)
@@ -87,7 +100,8 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
     setStop(null);
     setLoading(true); // buttons are disabled while loading, so only one AI call runs at a time
     try {
-      const res = await fetch(`/api/narrate?id=${encodeURIComponent(id)}`);
+      // The server re-checks persona against its allow-list, so a tampered value just falls back to Mortimer
+      const res = await fetch(`/api/narrate?id=${encodeURIComponent(id)}&persona=${encodeURIComponent(persona)}`);
       setStop(await res.json()); // facts + narration, or { error } with a friendly message
     } catch {
       setStop({ error: "The hearse broke down. Try again in a moment." }); // network failure or a non-JSON reply
@@ -103,6 +117,33 @@ export default function TourGuide({ tour, living }: { tour: TourName[]; living: 
     <div className="grid gap-8 md:grid-cols-[16rem_1fr]">
       {/* Roster list, grouped */}
       <nav className="flex flex-col gap-6">
+        {/* Narrator picker: changes only the voice of the next stop, never the facts */}
+        <fieldset>
+          <legend className="mb-2 px-2 font-sign text-sm uppercase tracking-widest text-amber">Your narrator</legend>
+          <div className="flex flex-wrap gap-1">
+            {narrators.map((narrator) => (
+              <label
+                key={narrator.id}
+                className={`cursor-pointer rounded-full border px-3 py-1 text-sm text-bone transition duration-200 focus-within:ring-2 focus-within:ring-amber motion-reduce:transition-none ${
+                  persona === narrator.id ? "border-blood bg-blood" : "border-rust/60 bg-tar/80 hover:border-amber"
+                }`}
+              >
+                {/* Real radio buttons, visually hidden: arrow keys and screen readers still work */}
+                <input
+                  type="radio"
+                  name="narrator"
+                  value={narrator.id}
+                  checked={persona === narrator.id}
+                  onChange={() => setPersona(narrator.id)}
+                  disabled={loading}
+                  className="sr-only"
+                />
+                {narrator.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
         {/* Search box: checks run in the browser before any API call */}
         <form onSubmit={search} className="flex flex-col gap-2">
           <div className="flex gap-2">
