@@ -24,6 +24,8 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Mortimer's example adds details not in its facts:** "swept across the silver screen in a cloak of shadows," the nickname "the Raven Queen," "audiences gripped their armrests for decades after," and "still the most commanding presence after midnight" (a present-day claim). It names no work, but it models inventing a career. Rewrite it to use only its 4 facts (this will change Mortimer's prompt, so re-test narration).
 - **All personas make present-day claims; tighten RULES or examples:** Phase 2 Step 3 tests showed "audiences still lean forward," "still raises gooseflesh decades later" (Mortimer) and "still stands as the figure against which later vampires are measured" (Historian).
 - **Re-narrate on switch:** changing the narrator only affects the next stop. Re-narrating the card on screen would add an AI call per switch.
+- **Weak planner gibberish check:** `/api/plan` only rejects text with no letters, so "asdfghjkl" still costs one AI call (the roster enum + server filter keep it harmless).
+- **Planner reads "silent" loosely:** "silent-film monsters" returned Lugosi, Karloff, and Lorre (early sound films) alongside Chaney and Browning. All picks were roster-only; the prompt could be tightened.
 
 ## Showcase (weekend)
 

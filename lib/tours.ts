@@ -6,7 +6,7 @@ import { ROSTER } from "@/lib/roster";
 
 // One number for "how long can a tour be", so the API, planner, and UI can never disagree
 export const MAX_LEGENDS = 6;
-const MAX_NAME_CHARS = 60; // matches VarChar(60) in schema.prisma; checked here first for a friendly message
+export const MAX_NAME_CHARS = 60; // matches VarChar(60) in schema.prisma; checked here first for a friendly message
 
 // Public roster only: test-only entries (Elvira) must never end up in a saved tour
 const PUBLIC_IDS = new Set(ROSTER.filter((legend) => !legend.testOnly).map((legend) => legend.id));

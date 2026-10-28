@@ -874,3 +874,13 @@ Keep each phase small enough for one commit.
 - `app/api/narrate/route.ts` imports them; no behavior change.
 **Verified:** lint and build passed; Lugosi + Mortimer printed `[narrate] persona=mortimer tokens in=933 out=137 · est $0.000162/call`, same format as before.
 **Mistake caught:** none
+
+### 2026-10-28 — Phase 3a Step 2: AI Tour Planner route
+**Tool:** Claude Code
+**Prompt:** "Approved. Keep the two extra tests and add "asdfghjkl" as a test. Accept gaps 1–3 as-is and add a one-line note about the weak gibberish check to parked.md. Save, then propose lint, build, and the curl tests."
+**Why:** Visitors describe a tour in plain words and the AI picks from the 20-legend roster; nothing is saved yet.
+**Result:**
+- New `POST /api/plan` + `lib/planPrompt.ts`: input checks before the AI, roster-only prompt, ID enum in the schema, server filter + de-dupe + `validateTour`, `logAiCost("plan")`, 429 busy message.
+- Fallback name "Midnight Hearse Route"; "nothing fits" → 422. Weak gibberish check and loose "silent" pick parked.
+**Verified:** lint + build passed. 7 curl tests: normal 200; injection 422 (no Elvis/Elvira); empty, 500 chars, "12345 !!!" → 400 with no AI call; "pizza recipes" and "asdfghjkl" → 422. 4 cost lines, ~$0.15 per 1,000 calls.
+**Mistake caught:** I said 8 test requests but listed 7 (caught by Lance).
