@@ -954,3 +954,13 @@ Keep each phase small enough for one commit.
 - "← Back to the Hearse" pill in the tour layout, so it shows on the tour page and the vanished page. Parked: flickering back-arrow, longer blood drips.
 **Verified:** Browser tests (Lance): chips capitalized and planning works; the link glows and goes home on both pages; phone width fits. lint + build not run for this step (they run in Phase 5 Step 1).
 **Mistake caught:** none
+
+### 2026-10-28 — Phase 5 Step 1: Pre-deploy checks + README
+**Tool:** Claude Code
+**Prompt:** "Then propose Phase 5, Step 1 only: final pre-deploy checks: confirm Leaflet loads client-side only on both pages, a clean build, and a README update (setup, env vars, Prisma commands, live link placeholder, and a "How this was built" section I'll write myself). Show the plan and stop." / Follow-ups: fix outdated sections; keep the in-app AI bullets, drop "Building it"; yes to npm ci; fill "How this was built" with my text exactly.
+**Why:** Prove the app builds from scratch the way Vercel will, and make the README match what's actually built.
+**Result:**
+- Leaflet: imported only in TourMap.tsx, loaded only via `dynamic(..., { ssr: false })` in a client file; both pages reach it through client components; production-server HTML of / and /tour/gGdHqlNL has 0 Leaflet markup.
+- README: narrators, planner, Save/share/Delete, Neon + Prisma, 3 env vars (names only), Prisma commands, planner and saved-tour guardrails, planner cost, live-link placeholder, "How this was built" (Lance's text).
+**Verified:** rm -rf .next → npm ci (498 packages, Prisma client regenerated, 0 vulnerabilities) → lint + build passed → prisma migrate status "Database schema is up to date!" → git status clean.
+**Mistake caught:** The parked "npm audit warnings" note is now out of date (npm ci reported 0 vulnerabilities).
