@@ -2,14 +2,16 @@
 // Front end: the AI Tour Planner. The visitor describes a tour; our /api/plan route picks legends from the roster.
 // Save sends the route to /api/tours and shows a share link.
 import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import Link from "next/link";
 import { MAX_REQUEST_CHARS } from "@/lib/planLimits";
 import type { NarratorOption } from "./TourGuide";
 import { rememberDeleteCode } from "./tourCodes";
 
 // What /api/plan sends back when it works: a tour name and the legends in route order
 type Plan = { name: string; legends: { id: string; name: string }[] };
-// A saved tour: its share link, the narrator it was saved with, and whether this browser kept the delete code
-type Saved = { shareUrl: string; narratorLabel: string; codeKept: boolean };
+// A saved tour: its page path (for in-app links), the full share link (to copy), the narrator it was saved with,
+// and whether this browser kept the delete code
+type Saved = { path: string; shareUrl: string; narratorLabel: string; codeKept: boolean };
 
 // Each one matches words in our roster taglines, so tapping one always has legends to find.
 // A tap only fills the box; the visitor still presses Plan or Enter, so every AI call is on purpose.
@@ -26,7 +28,7 @@ export default function TourPlanner({ narrator }: { narrator: NarratorOption }) 
   const [copyState, setCopyState] = useState<"idle" | "copied" | "manual">("idle");
   const busy = planning || saving; // while either runs, the box, chips, and ✕ are locked
   const boxRef = useRef<HTMLTextAreaElement>(null);
-  const linkRef = useRef<HTMLParagraphElement>(null);
+  const linkRef = useRef<HTMLAnchorElement>(null);
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   // Numbers each request. An answer is shown only if it's still the newest, so a slow, older answer
   // can never replace a newer one (or appear after the text has changed).
@@ -82,6 +84,7 @@ export default function TourPlanner({ narrator }: { narrator: NarratorOption }) 
         return;
       }
       setSaved({
+        path: `/tour/${data.id}`,
         shareUrl: `${window.location.origin}/tour/${data.id}`,
         narratorLabel: narrator.label, // frozen: changing the picker later doesn't change a saved tour
         codeKept: rememberDeleteCode(data.id, data.deleteCode),
@@ -220,20 +223,30 @@ export default function TourPlanner({ narrator }: { narrator: NarratorOption }) 
 
             {saved ? (
               <div className="mt-3 border-t border-rust/40 pt-3 text-sm">
-                <p className="font-sign text-amber">Tour saved! Share link:</p>
-                <div className="mt-1 flex items-start gap-2">
-                  {/* Plain selectable text, not a link yet: the /tour page arrives in Phase 4 */}
-                  <p ref={linkRef} className="min-w-0 flex-1 select-all break-all rounded bg-black/40 px-2 py-1 font-mono text-xs">
-                    {saved.shareUrl}
-                  </p>
+                <p className="font-sign text-amber">Tour saved!</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Link
+                    href={saved.path}
+                    className="rounded-full bg-blood px-4 py-2 font-sign text-sm text-bone transition duration-200 hover:shadow-[0_0_16px_rgba(168,18,31,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
+                  >
+                    Open tour →
+                  </Link>
                   <button
                     type="button"
                     onClick={copyLink}
-                    className="shrink-0 rounded-full border border-rust/60 px-3 py-1 text-xs text-bone transition duration-200 hover:border-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
+                    className="rounded-full border border-rust/60 px-4 py-2 text-sm text-bone transition duration-200 hover:border-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
                   >
-                    {copyState === "copied" ? "Copied!" : "Copy"}
+                    {copyState === "copied" ? "Copied!" : "Copy link"}
                   </button>
                 </div>
+                {/* The share link itself: a real link, clearly underlined, and what the Copy fallback selects */}
+                <Link
+                  ref={linkRef}
+                  href={saved.path}
+                  className="mt-2 block break-all rounded bg-black/40 px-2 py-1 font-mono text-xs text-bone underline decoration-amber/70 underline-offset-2 transition-colors duration-200 hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
+                >
+                  {saved.shareUrl}
+                </Link>
                 {copyState === "manual" && (
                   <p className="mt-2 text-xs italic text-amber">Copying is blocked here. The link is selected: press Ctrl+C (⌘C on Mac).</p>
                 )}

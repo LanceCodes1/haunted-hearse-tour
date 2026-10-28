@@ -34,18 +34,27 @@ function formatDate(date?: string | null): string {
   return new Date(date).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "long", day: "numeric" });
 }
 
-// One tour stop: back button, tombstone, Wikidata facts (+ map), AI narration, and the honesty label
-export default function TourStopCard({ stop }: { stop: TourStop }) {
+// One tour stop: back button, tombstone, Wikidata facts (+ map), AI narration, and the honesty label.
+// onBack/backLabel let each page decide what "back" means; the defaults keep the home page's intro-panel event.
+export default function TourStopCard({
+  stop,
+  onBack = () => window.dispatchEvent(new Event(ENTRANCE_EVENT)),
+  backLabel = "← Back to the tour entrance",
+}: {
+  stop: TourStop;
+  onBack?: () => void;
+  backLabel?: string;
+}) {
   return (
     <article className="mx-auto max-w-xl overflow-hidden rounded-2xl border border-rust/60 bg-tar/90 text-bone shadow-[0_0_40px_rgba(168,18,31,0.25)]">
-      {/* Back to the intro panel, same as clicking the site title */}
+      {/* Back button: on the home page it returns to the intro panel, same as clicking the site title */}
       <div className="bg-black/60 px-4 pt-4">
         <button
           type="button"
-          onClick={() => window.dispatchEvent(new Event(ENTRANCE_EVENT))}
+          onClick={onBack}
           className="rounded-full border border-rust/60 px-3 py-1 font-sign text-sm text-bone transition duration-200 hover:border-amber hover:shadow-[0_0_12px_rgba(242,169,59,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
         >
-          ← Back to the tour entrance
+          {backLabel}
         </button>
       </div>
       <div className="flex justify-center bg-black/60 pt-4">

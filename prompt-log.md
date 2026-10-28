@@ -924,3 +924,13 @@ Keep each phase small enough for one commit.
 - `TourGuide.tsx` imports the card; `SiteTitle.tsx` imports the event from the card file.
 **Verified:** lint + build passed. Text check: each piece defined in one place; the moved card matches the last commit word for word except `export default`. Browser test (Lance): Lugosi card + map + narration, Karloff fallback, back button and site title return to the intro.
 **Mistake caught:** none. Noted for Step 2: on the share page, nothing listens for the card's "back" event.
+
+### 2026-10-28 — Phase 4 Step 2: Share page /tour/[id]
+**Tool:** Claude Code
+**Prompt:** "Then propose Phase 4, Step 2: the /tour/[id] share page. Show the diff and stop." / Follow-up: "Test 8 failed: clicking the share link text in the planner does nothing, and it doesn't look clickable. Fix: (1) Make the link text a real link that opens the tour page, underlined with a hover color. (2) Add an "Open tour →" button next to Copy."
+**Why:** A saved tour needs a page anyone can open from its link, narrated in the tour's saved voice.
+**Result:**
+- New `app/tour/[id]/`: layout (background + title linking home), page (DB read inside Suspense after connection(); notFound for bad or missing IDs; names from the roster), TourStops (numbered stops → shared card in the saved persona), themed "vanished into the fog" not-found page.
+- TourStopCard takes onBack/backLabel ("← Back to the stop list" here); SiteTitle takes href. Planner: "Open tour →" + "Copy link" + an underlined, clickable share link.
+**Verified:** lint + build passed (/tour/[id] is Partial Prerender). HTML check: tour name, Historian label, stops present; deleteCodeHash and 7 prompt phrases absent; both missing-tour URLs show the vanished page (status 200, as the docs say for notFound after streaming starts). Browser tests 1–8 (Lance) passed, including incognito.
+**Mistake caught:** The first share link didn't open and barely looked like a link. The code was already a real link, so the likely cause (unconfirmed) was a tab still running the earlier plain-text version; the dim rust underline explains why it didn't look clickable. Fixed with Open tour → and an amber underline. Also: my first HTML check failed because I named a zsh loop variable `path`, which replaces the command search path.
