@@ -934,3 +934,13 @@ Keep each phase small enough for one commit.
 - TourStopCard takes onBack/backLabel ("← Back to the stop list" here); SiteTitle takes href. Planner: "Open tour →" + "Copy link" + an underlined, clickable share link.
 **Verified:** lint + build passed (/tour/[id] is Partial Prerender). HTML check: tour name, Historian label, stops present; deleteCodeHash and 7 prompt phrases absent; both missing-tour URLs show the vanished page (status 200, as the docs say for notFound after streaming starts). Browser tests 1–8 (Lance) passed, including incognito.
 **Mistake caught:** The first share link didn't open and barely looked like a link. The code was already a real link, so the likely cause (unconfirmed) was a tab still running the earlier plain-text version; the dim rust underline explains why it didn't look clickable. Fixed with Open tour → and an amber underline. Also: my first HTML check failed because I named a zsh loop variable `path`, which replaces the command search path.
+
+### 2026-10-28 — Phase 4 Step 3: Delete tour button
+**Tool:** Claude Code
+**Prompt:** "Then propose Phase 4, Step 3: the Delete tour button, shown only in the browser that created the tour. Show the diff and stop." / Follow-ups: "Approved, including the 3 decisions." / "Propose a one-time cleanup that deletes every tour except gGdHqlNL. List the IDs first and wait for my approval."
+**Why:** Only the creator can remove a shared tour, using the delete code kept in their browser.
+**Result:**
+- `app/tourCodes.ts` adds getDeleteCode / forgetDeleteCode; TourStops reads the code with useSyncExternalStore (server shows no button), two-click inline confirm (Delete tour → Yes, delete / Keep it), code sent in the x-delete-code header; 404 counts as already deleted.
+- One-time cleanup (scratchpad script, exact ID list): deleted 10 test tours; only gGdHqlNL remains.
+**Verified:** lint + build passed. Browser tests (Lance): Yes, delete → "Tour deleted" → reload shows vanished; Keep it cancels; incognito shows no Delete box. Server log: DELETE /api/tours/fJCmk1AJ 200. Listing after cleanup: 1 tour (gGdHqlNL).
+**Mistake caught:** I expected 6 extra tours; the listing found 10 (more were saved during later tests), so the cleanup used a fresh ID list.

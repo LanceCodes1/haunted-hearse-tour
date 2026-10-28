@@ -39,5 +39,7 @@ async function SavedTour({ params }: { params: Promise<{ id: string }> }) {
   });
 
   // Only the narrator's label goes to the browser; its prompt stays on the server
-  return <TourStops name={tour.name} persona={tour.persona} narratorLabel={PERSONAS[tour.persona].label} stops={stops} />;
+  return (
+    <TourStops tourId={id} name={tour.name} persona={tour.persona} narratorLabel={PERSONAS[tour.persona].label} stops={stops} />
+  );
 }
