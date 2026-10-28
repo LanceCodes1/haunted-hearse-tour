@@ -2,6 +2,12 @@
 
 Ideas and fixes saved for later. Not in this week's build.
 
+## Should
+
+- **Click-to-explore map:** map sleeps until clicked; when awake, wheel zooms and drag pans; click outside or mouse-leave puts it back to sleep. No right-click zoom.
+
+## Later
+
 - **Narration runs long:** it comes out around 86 words, over the prompt's 60–80 target (Vincent Price hit ~100 in a later test). W7 fix: a hard word-count check in the narrate route that drops or flags any narration over 80 words (today's shape check allows up to 1,200 characters, about 200 words). (done in Phase 2 Step 3b)
 - **Filler line:** the narration adds "the record books go quiet" even when no fact is missing.
 - **Notable-work field from Wikidata (W7):** pull a legend's famous work from Wikidata instead of the AI's general knowledge.
@@ -27,6 +33,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Weak planner gibberish check:** `/api/plan` only rejects text with no letters, so "asdfghjkl" still costs one AI call (the roster enum + server filter keep it harmless).
 - **Planner reads "silent" loosely:** "silent-film monsters" returned Lugosi, Karloff, and Lorre (early sound films) alongside Chaney and Browning. All picks were roster-only; the prompt could be tightened.
 - Floating ghost button with tour categories (Should, after Musts).
+- Review skipDangerousModePermissionPrompt in ~/.claude/settings.json after the gate.
 
 ## Showcase (weekend)
 

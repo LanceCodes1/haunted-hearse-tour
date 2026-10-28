@@ -894,3 +894,13 @@ Keep each phase small enough for one commit.
 - `lib/planLimits.ts` holds the 300 limit for both the route and the screen. Enter/Shift+Enter, ✕ fresh start, 4 chips that fill + focus, request numbering so an older answer is never shown.
 **Verified:** lint + build passed. Browser tests (Lance): normal plan, pizza, gibberish, empty/spaces, narrator line, phone width, Enter/Shift+Enter, ✕, chips fill only, deleting clears the route, no stray list. Retest sent 3 AI calls for 3 plans.
 **Mistake caught:** Chips that planned on one tap made results feel random; reverted to fill-only. A different list appeared after deleting text; I couldn't confirm the cause from code or logs, so requests are now numbered and only the newest answer can show.
+
+### 2026-10-28 — Map: no zoom on page scroll
+**Tool:** Claude Code
+**Prompt:** "After this step is committed, a separate small step: the Leaflet map should not zoom on mouse-wheel scroll; keep the + / − buttons. Don't start until I say go." / Follow-up: "Approved, keep double-click zoom. One addition: on touch devices, turn off one-finger map dragging so a one-finger swipe scrolls the page. Pinch and + / − still work."
+**Why:** Scrolling down the page zoomed the map whenever the mouse passed over it.
+**Result:**
+- `app/TourMap.tsx`: `scrollWheelZoom: false`; `dragging: !L.Browser.mobile`, so on phones one finger scrolls the page (Leaflet's CSS then allows page panning) and pinch still zooms.
+- Parked: click-to-explore map (Should); review skipDangerousModePermissionPrompt after the gate.
+**Verified:** lint + build passed. Desktop test (Lance): the page scrolls over the map; + / − and double-click zoom. Phone swipe not tested yet.
+**Mistake caught:** I said the attribution setting's JSON check could run, but the edit had never been saved; caught before committing, then saved and re-checked.
