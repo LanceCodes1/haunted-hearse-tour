@@ -6,6 +6,8 @@ Ideas and fixes saved for later. Not in this week's build.
 
 - **Click-to-explore map:** map sleeps until clicked; when awake, wheel zooms and drag pans; click outside or mouse-leave puts it back to sleep. No right-click zoom.
 - **My Tours list:** show tours this browser created, using the saved delete codes.
+- **Flickering back-arrow** next to the site title, same style and flicker as the title, with a subtle "back" hint. Keep the text button too.
+- **Longer blood drips:** extend the edge drips (left and right ends, second-to-end) about half an inch, and the drip under "HEARSE" a bit. Keep the alternating short/long/medium pattern.
 
 ## Later
 

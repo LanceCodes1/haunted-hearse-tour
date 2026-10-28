@@ -15,7 +15,7 @@ type Saved = { path: string; shareUrl: string; narratorLabel: string; codeKept: 
 
 // Each one matches words in our roster taglines, so tapping one always has legends to find.
 // A tap only fills the box; the visitor still presses Plan or Enter, so every AI call is on purpose.
-const SUGGESTIONS = ["silent-film monsters", "Universal classics", "horror writers", "Dracula connections"];
+const SUGGESTIONS = ["Silent-Film Monsters", "Universal Classics", "Horror Writers", "Dracula Connections"];
 
 export default function TourPlanner({ narrator }: { narrator: NarratorOption }) {
   const [wish, setWish] = useState("");

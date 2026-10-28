@@ -944,3 +944,13 @@ Keep each phase small enough for one commit.
 - One-time cleanup (scratchpad script, exact ID list): deleted 10 test tours; only gGdHqlNL remains.
 **Verified:** lint + build passed. Browser tests (Lance): Yes, delete → "Tour deleted" → reload shows vanished; Keep it cancels; incognito shows no Delete box. Server log: DELETE /api/tours/fJCmk1AJ 200. Listing after cleanup: 1 tour (gGdHqlNL).
 **Mistake caught:** I expected 6 extra tours; the listing found 10 (more were saved during later tests), so the cleanup used a fresh ID list.
+
+### 2026-10-28 — Polish: chips + Back to the Hearse
+**Tool:** Claude Code
+**Prompt:** "After Delete is committed, a small polish step: (1) capitalize the 4 planner chips (Silent-Film Monsters, Universal Classics, Horror Writers, Dracula Connections); (2) add a clear "← Back to the Hearse" link at the top of the tour page, in the site's spooky style, that goes home."
+**Why:** Chips read as titles, and visitors arriving from a shared link get an obvious way home.
+**Result:**
+- Planner chips capitalized (the placeholder stays lowercase).
+- "← Back to the Hearse" pill in the tour layout, so it shows on the tour page and the vanished page. Parked: flickering back-arrow, longer blood drips.
+**Verified:** Browser tests (Lance): chips capitalized and planning works; the link glows and goes home on both pages; phone width fits. lint + build not run for this step (they run in Phase 5 Step 1).
+**Mistake caught:** none
