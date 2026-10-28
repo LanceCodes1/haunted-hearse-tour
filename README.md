@@ -2,7 +2,7 @@
 
 *Before Freddy, Jason, and Chucky, these are the people who invented the monsters. Hop in.*
 
-**Live demo:** _link coming after deploy_
+**Live demo:** [haunted-hearse-tour.vercel.app](https://haunted-hearse-tour.vercel.app)
 
 ## What it is
 

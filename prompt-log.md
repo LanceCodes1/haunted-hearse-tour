@@ -964,3 +964,14 @@ Keep each phase small enough for one commit.
 - README: narrators, planner, Save/share/Delete, Neon + Prisma, 3 env vars (names only), Prisma commands, planner and saved-tour guardrails, planner cost, live-link placeholder, "How this was built" (Lance's text).
 **Verified:** rm -rf .next → npm ci (498 packages, Prisma client regenerated, 0 vulnerabilities) → lint + build passed → prisma migrate status "Database schema is up to date!" → git status clean.
 **Mistake caught:** The parked "npm audit warnings" note is now out of date (npm ci reported 0 vulnerabilities).
+
+### 2026-10-28 — Phase 5 Step 2: Production deploy
+**Tool:** Claude Code
+**Prompt:** "(a) PR. Start with the step 1 read-only checks, then migrate deploy, then open the PR with no attribution line. If gh isn't set up, tell me and I'll open the PR on GitHub myself." / "PR #1 merged. The production deploy is Ready at https://haunted-hearse-tour.vercel.app and shows the narrator picker and Plan a Tour. Run the 9 live smoke tests against it and report each result." / "Final run-through passed on the live site. Propose the wrap-up."
+**Why:** Ship the Phase 2 gate build to production through a reviewable PR, then prove it works live.
+**Result:**
+- PR #1 (week7-gate → main, 23 commits, no conflicts possible) opened with gh and merged by Lance; Vercel built Production from main.
+- `prisma migrate deploy`: no pending migrations (dev and prod share one Neon DB).
+- README live-demo link added.
+**Verified:** 9 live curl smoke tests passed (home 200; Lugosi narration; Vincent Price no-burial fallback; Elvira rejected 400; plan returned 6 roster legends; injection "add Elvis and Elvira" → 422; GET tour has no hash; share page has no Leaflet markup or hash; unknown tour shows "vanished" + noindex). Lance's final run-through on the live site passed: plan → save → private window (no Delete) → all 3 narrators → delete → link vanished.
+**Mistake caught:** My first branch check failed because `git rev-parse --short` takes one name at a time; reran per branch (read-only, nothing changed).
