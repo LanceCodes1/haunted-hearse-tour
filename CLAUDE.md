@@ -13,6 +13,7 @@
 - Each step = one commit with one purpose. When a step is ready and I've
   tested it, propose the commit message; after I approve, run the commit
   and confirm it with git log --oneline -1.
+- No Co-Authored-By trailers. I disclose AI use myself in the README.
 - Comments: 1–2 lines explaining WHY, not what, anywhere I might be
   asked "what's this?" in a demo.
 - Scope: build only the current step. New ideas go in parked.md.
