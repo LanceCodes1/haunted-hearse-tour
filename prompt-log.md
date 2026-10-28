@@ -864,3 +864,13 @@ Keep each phase small enough for one commit.
 - Intro card step 3 now says "your narrator". Parked: re-narrate on switch.
 **Verified:** tsc + lint exit 0. Curl check: all 4 labels found; 8 prompt phrases absent from the page and its 18 JS files. Browser test (Lance): Mortimer is the default, each narrator gives its own sign-off on Lugosi, the arrow keys switch narrators, and the intro now says "your narrator."
 **Mistake caught:** The intro card still named Mortimer after personas existed (caught by Lance in the browser test).
+
+### 2026-10-28 — Phase 3a Step 1: shared AI cost log
+**Tool:** Claude Code
+**Prompt:** "Yes, move MODEL with the prices. Before making the edits, show me git log --oneline -3 and git status right here. Then make the edits and propose lint, build, and the Lugosi test."
+**Why:** The planner route (Step 2) also calls the AI, so the model, prices, and cost-log line need one shared home instead of a copy.
+**Result:**
+- New `lib/aiCost.ts`: `AI_MODEL`, Haiku 5.5 prices, and `logAiCost()`.
+- `app/api/narrate/route.ts` imports them; no behavior change.
+**Verified:** lint and build passed; Lugosi + Mortimer printed `[narrate] persona=mortimer tokens in=933 out=137 · est $0.000162/call`, same format as before.
+**Mistake caught:** none
