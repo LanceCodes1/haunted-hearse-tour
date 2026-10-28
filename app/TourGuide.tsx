@@ -182,7 +182,7 @@ export default function TourGuide({
         </form>
 
         {/* AI Tour Planner: shows the narrator picked above instead of a second picker */}
-        <TourPlanner narratorLabel={narrators.find((narrator) => narrator.id === persona)?.label ?? ""} />
+        <TourPlanner narrator={narrators.find((narrator) => narrator.id === persona) ?? narrators[0]} />
 
         {groups.map((group) => (
           <section key={group}>

@@ -904,3 +904,13 @@ Keep each phase small enough for one commit.
 - Parked: click-to-explore map (Should); review skipDangerousModePermissionPrompt after the gate.
 **Verified:** lint + build passed. Desktop test (Lance): the page scrolls over the map; + / − and double-click zoom. Phone swipe not tested yet.
 **Mistake caught:** I said the attribution setting's JSON check could run, but the edit had never been saved; caught before committing, then saved and re-checked.
+
+### 2026-10-28 — Phase 3b Step 2: Save button
+**Tool:** Claude Code
+**Prompt:** "Then propose Phase 3b, Step 2 only: the Save button. Show the diff and stop." / Follow-up: "Approved with changes: (1) Add a Copy button next to the share link that shows "Copied!" briefly, with a fallback if the clipboard isn't allowed. (2) Park "editable tour name." (3) In cleanup, keep one saved tour for Phase 4 testing and delete the rest."
+**Why:** A planned route can now be saved to Postgres and shared; only the creator's browser holds the delete code.
+**Result:**
+- "Save this tour" sends name + legend IDs + the narrator picked at that moment to POST /api/tours; shows the share link with Copy ("Copied!", or selects the link if the clipboard is blocked).
+- `app/tourCodes.ts` keeps delete codes in localStorage["hht-tour-codes"] (try/catch; warns if the browser won't keep it). Parked: editable tour name, My Tours list.
+**Verified:** lint + build passed. Browser tests (Lance): save, copy, narrator lock, double-click (one save), delete-a-letter clears. Server log: 5 saves = 5 POST /api/tours 201. curl GET /api/tours/lyJkV7VB → 200 with name, 4 legends, persona kid, no hash.
+**Mistake caught:** My read-only database script printed createdAt 7 hours off (it read the stored UTC time as local time); the API's time was correct.

@@ -5,6 +5,7 @@ Ideas and fixes saved for later. Not in this week's build.
 ## Should
 
 - **Click-to-explore map:** map sleeps until clicked; when awake, wheel zooms and drag pans; click outside or mouse-leave puts it back to sleep. No right-click zoom.
+- **My Tours list:** show tours this browser created, using the saved delete codes.
 
 ## Later
 
@@ -34,6 +35,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Planner reads "silent" loosely:** "silent-film monsters" returned Lugosi, Karloff, and Lorre (early sound films) alongside Chaney and Browning. All picks were roster-only; the prompt could be tightened.
 - Floating ghost button with tour categories (Should, after Musts).
 - Review skipDangerousModePermissionPrompt in ~/.claude/settings.json after the gate.
+- **Editable tour name:** the saved name is the AI's title; let the creator change it before saving.
 
 ## Showcase (weekend)
 
