@@ -686,3 +686,281 @@ Append a short log entry.
 
 ### Day 3 · Project one-liner
 **AI narration of horror legends' graves · failure mode: AI invents facts about a real person · guardrail: Wikidata is the only fact source, and every card labels facts vs. AI narration.**
+
+---
+
+## Week 7: Phase 2 gate
+
+### 2026-10-26 — Phase 2 gate plan
+**Tool:** Claude Code (plan mode)
+**Prompt:** Plan only, no code yet. We're extending Haunted Hearse Tour for my Phase 2 gate
+(Thursday). Read README.md, parked.md, and CLAUDE.md first.
+
+Gate non-negotiables: deployed on Vercel, Postgres database (Prisma + Neon),
+reliable AI features with guardrails, I can explain every part.
+
+Build in this order. Each phase ends working + committed before the next starts:
+
+MUST
+1. Database: Prisma (latest STABLE version) + Neon. A Tour model:
+   id (short shareable id), name, legendIds (list of roster IDs), persona,
+   createdAt. Create/read/delete saved tours.
+2. Narrator personas: Campy Mortimer (default), Scholarly Historian,
+   Kid-Friendly. Persona changes only the system prompt; same guardrails and
+   Wikidata-facts-only rule for all three.
+3. AI Tour Planner: user describes what they want in plain words; AI returns a
+   route chosen ONLY from the 20-legend roster (validate every ID server-side,
+   structured JSON, length caps). User can save it as a Tour.
+4. Shareable tour page at /tour/[id].
+5. Leaflet must load client-side only (dynamic import, ssr:false) so the
+   Vercel build doesn't fail.
+
+SHOULD
+6. Voice: a Play button that reads the narration aloud with a different
+   original voice per persona (no imitating real or famous characters).
+   Audio generates only on click; fall back to the browser's built-in voice if
+   the TTS API fails or times out. Log cost per play.
+7. Legend hover cards: expand and push neighbors aside instead of overlapping
+   names (use the Motion library).
+8. Lightning flash synced to the flickering bulb + thunder sound behind a
+   sound toggle that's OFF by default. Respect prefers-reduced-motion.
+
+STRETCH
+9. "Graves Visited" counter from the database.
+
+For the plan: list the files you'll touch per phase, new env variables needed,
+packages to install (with versions), and the risks for deploying on Vercel.
+Keep each phase small enough for one commit.
+**Why:** Plan the whole Phase 2 build before writing code, so each phase is one small, testable commit.
+**Result:**
+- Plan approved: 12 small phases (1a–9), with files, env variables, pinned package versions, and 10 Vercel risks. My choices: ElevenLabs voice, creator-only delete code, Stretch (counter) parked, thunder generated in code.
+- Leaflet was already client-only (`dynamic`, `ssr: false`), so Phase 5 is a check plus the first deploy.
+**Commit:**
+**Mistake caught:** npm's "latest" tag for `prisma` is a release candidate (8.0.0-rc.27), not stable. The plan pins stable 7.10.1. Also, the DB URLs were in `.env` instead of `.env.local`.
+
+### 2026-10-26 — Step 0: Working rules in CLAUDE.md
+**Tool:** Claude Code (manual mode)
+**Prompt:** Step 0 (before 1a): Propose adding this section to CLAUDE.md, show me the diff, and wait for my approval: [pasted "## Working rules" section]. Follow-ups: "Overlaps: (a) replace the old prompt-log template with the new one (Tool / Prompt / Why / Result / Verified / Mistake caught; drop Commit:). (b) Remove the old "one-line comments on key logic" line. One rule per topic, no duplicates." / "Prompt-log move: approved, keep the rule in the "## Prompt log" section only. Planning trim: rejected. Restore the Planning section exactly as it was."
+**Why:** Lock in manual mode, no git/npm/prisma runs by Claude, one commit per step, and pinned versions before the Phase 2 build starts.
+**Result:**
+- Added "## Working rules". Removed 4 "How I work" lines that duplicated it. Prompt-log template now has Verified instead of Commit.
+- Planning section unchanged (Claude's trim was rejected).
+- Also: fixed the plan-log clause ("Stretch (counter) parked"), marked Phases 6–8 "Roadmap (not approved)" in the plan, and moved the counter to parked.md.
+**Verified:** Reviewed the final CLAUDE.md diff before saving.
+**Mistake caught:** Claude's plan entry said I chose a site-wide counter. I hadn't, so the counter is now parked as undecided. Claude also tried to trim the Planning section beyond what I asked.
+
+### 2026-10-26 — Step 0b: Claude runs approved commands
+**Tool:** Claude Code (manual mode)
+**Prompt:** Change the CLAUDE.md working rule. Replace "Never run git, npm install, or prisma commands; give me the command and I run it" with: "Propose each command (git, npm, prisma) with a one-line plain-language explanation, wait for my approval, then run it and confirm the result. After every commit, run git log --oneline -1 to prove it landed." Show me the diff. / Follow-up: Reword "Small steps" to: "Each step = one commit with one purpose. When a step is ready and I've tested it, propose the commit message; after I approve, run the commit and confirm it with git log --oneline -1." 2) Own commit, "Step 0b." Also confirm the Step 0 commit actually landed. If it didn't, propose committing Step 0 first, then 0b. Show me the final diff, save, add the log entry, then propose the 0b commit.
+**Why:** I approve every command, but Claude runs it and proves the result, so there's no copy-paste gap (Step 0 looked committed when it wasn't).
+**Result:**
+- Replaced the "never run" rule with propose → approve → run → confirm.
+- Reworded the step rule: commit only after I test, and every commit is checked with `git log --oneline -1`.
+**Verified:** Step 0 landed as `d6f2fb9` and the tree was clean before 0b. Reviewed the final diff before saving.
+**Mistake caught:** My quote of the old rule didn't match the file exactly. Claude replaced the real two-line text.
+
+### 2026-10-26 — Phase 1a: Prisma + Neon + Tour table
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 1a. / Approved, run Part 1 installs. / Approved, apply the Part 2 edits. / Approved, run 1 (prisma generate). / Approved, run 2 (prisma migrate dev). / Approved, run 4 (npm run lint)
+**Why:** The gate needs a real Postgres database. This step sets up Prisma 7 + Neon and creates the Tour table that saved tours will use.
+**Result:**
+- Pinned prisma, @prisma/client, @prisma/adapter-neon 7.10.1 and dotenv 18.0.9. Added schema, prisma.config.ts, lib/db.ts, and postinstall generate.
+- Migration `20261027062746_add_tour` created the Persona enum and the Tour table in Neon.
+**Verified:** `prisma generate` OK, `migrate dev` reported the DB in sync, `npm run lint` clean, `npx tsc --noEmit` exit 0. Lance read migration.sql: Persona enum and 6 Tour columns confirmed. Studio check skipped.
+**Mistake caught:**
+- Prisma's update box suggested 8.0.0-rc.27. Ignored, because the rules say no rc versions.
+- Asked to stop Studio, but it had never been started; caught by checking for the process instead of assuming.
+
+### 2026-10-27 — Phase 1b Step 1: Tour validation (lib/tours.ts)
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 1b, Step 1 only: lib/tours.ts with the shared validation from the plan (name 1–60 chars; 1 to MAX_LEGENDS legend IDs, each on the public roster, no duplicates; persona on the allow-list). Export MAX_LEGENDS = 6 as one constant. Propose the edit with WHY comments, show me the diff, and tell me how I'll test it. Stop after Step 1. / Follow-ups: Approve with one change: missing persona → default to "mortimer"; invalid persona (like "vampire") → reject with "Pick a narrator for your tour." Add a WHY comment explaining missing vs invalid. Then save and propose tsc + lint. / Treat null as missing too (default to Mortimer). Re-run tsc and lint after the change, then propose the log entry and commit message.
+**Why:** One shared set of rules for saving a tour, so the API and the AI planner can't disagree about what a valid tour is.
+**Result:**
+- `validateTour()` checks name (1–60), legends (1–MAX_LEGENDS, public roster only, no repeats) and persona, and returns a cleaned tour or one plain-language message.
+- Persona allow-list comes from the Prisma enum. Missing or null defaults to Mortimer; an invalid value is rejected.
+**Verified:** `npx tsc --noEmit` exit 0, `npm run lint` exit 0 (re-run after the null change). Behavior is tested with curl in Step 2.
+**Mistake caught:** First draft rejected a missing persona even though the database defaults to Mortimer, so the two layers disagreed. Changed it so missing or null defaults to Mortimer and invalid gets rejected.
+
+### 2026-10-27 — Phase 1b Step 2: Tour routes (create / read / delete)
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 1b, Step 2: the three tour routes (POST create, GET by id, DELETE with delete code) from the plan. Propose with WHY comments, show the diff, and give me the curl tests. Stop after Step 2.
+**Why:** Saved tours need a back end: create a tour with a shareable ID, read it back, and let only its creator delete it.
+**Result:**
+- POST /api/tours validates with validateTour, saves the tour, and returns the id + a one-time delete code (only its SHA-256 hash is stored).
+- GET /api/tours/[id] returns the tour without the hash. DELETE needs the right x-delete-code header (constant-time check).
+**Verified:** tsc + lint exit 0. 21 curl tests passed: create/read (incl. trimmed name, missing/null persona → mortimer), all 8 validation messages (400), delete with no/wrong code (403), right code (200), then 404. Test tours cleaned up; no errors in the server log.
+**Mistake caught:** A comment in lib/tours.ts got split by an accidental Enter in the editor. Caught in git diff and rejoined so the commit only has Step 2 work.
+
+### 2026-10-27 — Early deploy: local build + Vercel project
+**Tool:** Claude Code (manual mode) + Vercel dashboard (Lance)
+**Prompt:** Hold Phase 2. We do the early deploy first, as approved. Walk me through it one step at a time: (1) which env vars I add in Vercel and where, (2) confirming the week7-gate preview deploy builds, (3) a smoke test on the live preview URL with one curl create/read/delete. You don't touch any secrets. I paste them into Vercel myself. / Follow-ups: Next: run npm run build locally, then get week7-gate deployed as a Preview… / Correction: there's no week7-gate preview yet… Add these 3 lines to parked.md… Propose the commit, then push to week7-gate so Vercel builds the preview.
+**Why:** Deploy early so Vercel or Prisma build problems show up days before the gate, not the night before.
+**Result:**
+- Lance created the Vercel project and set DATABASE_URL, DATABASE_URL_POOLED and ANTHROPIC_API_KEY for Production + Preview. main is live and narration works.
+- Local `npm run build` passed: tours routes are dynamic (ƒ), so nothing reads the DB at build time.
+- Parked: custom domain, turning preview protection back on, per-IP rate limiting.
+**Verified:** `npm run build` exit 0. Production narration checked live by Lance. Preview build + smoke test come next, after this push.
+**Mistake caught:** I reported the week7-gate preview as Ready, but Vercel only had the main deploy. The branch was pushed before the project existed, so Vercel never saw it. Caught by checking the Deployments list; this push triggers the preview.
+
+### 2026-10-27 — Early deploy: preview smoke test
+**Tool:** Claude Code (manual mode) + Vercel dashboard (Lance)
+**Prompt:** Update: the Vercel env vars were never saved on import. I added all 3 for Production + Preview and redeployed both. Production narration works live. The week7-gate preview is Ready at https://haunted-hearse-tour-git-week7-gate-lance-codes-1.vercel.app and loads with no login. Approved, run curl calls 1–5 against the preview URL and report each status.
+**Why:** Prove the tours API works on Vercel + Neon, not just locally.
+**Result:**
+- week7-gate preview built and is Ready, with Prisma Client generated on Vercel.
+- Create 201 → read 200 (no hash) → wrong-code delete 403 → delete 200 → read 404. Test row cleaned up.
+**Verified:** All 5 curl calls returned the expected status against the live preview.
+**Mistake caught:** The env vars added on the Vercel import screen were never saved. Found when checking Settings; re-added all 3 for Production + Preview and redeployed.
+
+### 2026-10-27 — Phase 2 Step 1: Personas + shared prompt rules
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 2, Step 1 only: create lib/personas.ts and split lib/narratorPrompt.ts into the shared RULES block plus buildSystemPrompt(persona), as in the plan. Mortimer's text stays exactly as it is now. Leave clearly marked placeholders for the Historian and Kid-Friendly voice paragraphs and sign-offs. I'll write those. No route or UI changes yet. Show me the diff and stop. / Follow-up: Approved. 1) I'll write an example for each persona too. Keep the EXAMPLE placeholders. 2) Park the neutral-phrase idea in parked.md. I'll show each persona's own missing-fact phrasing in its example instead. Save, then propose tsc, lint, and the IDENTICAL check.
+**Why:** Personas may change only the voice. One shared RULES block keeps the Wikidata-only fact rules the same for every narrator.
+**Result:**
+- New lib/personas.ts: Mortimer moved over unchanged; Historian + Kid-Friendly have [[LANCE WRITES]] placeholders (voice, sign-off, example).
+- lib/narratorPrompt.ts now has shared RULES + buildSystemPrompt(persona); NARRATOR_SYSTEM_PROMPT still exported, so /api/narrate is unchanged.
+**Verified:** tsc + lint exit 0. Compare script: old prompt vs buildSystemPrompt("mortimer") → IDENTICAL (1,685 chars).
+**Mistake caught:** My Step 1 prompt asked only for voice + sign-off placeholders. Claude flagged that each persona also needs its own example (otherwise it copies Mortimer's carnival style), so example placeholders were added.
+
+### 2026-10-27 — Phase 2 Step 2: Historian + Kid-Friendly personas
+**Tool:** Claude Code (manual mode)
+**Prompt:** [pasted "Persona drafts": Historian + Kid-Friendly voice, sign-off, example] / Follow-ups: Where are we on Phase 2 Step 2? Show me the diff for the voices, sign-offs, and exampleFacts change, plus your example drafts for the Historian and Kid-Friendly. Don't save anything until I approve. / Not approved yet. Both examples name a movie ("The Veiled Lantern," "Swamp Shadows") that isn't in their exampleFacts… Show me the revised diff. / Approved. Save both files and propose the checks. Also answer my earlier question: does Mortimer's example name a work or include an opinion that's not in his exampleFacts? Don't change it, just tell me. If it does, add a line to parked.md.
+**Why:** Give the Historian and Night Guide their own voices while every persona keeps the same Wikidata-only RULES.
+**Result:**
+- Historian + Kid-Friendly voices and sign-offs added; each persona now has its own exampleFacts (fictional legend, burial place missing on purpose) so the example shows an honest gap.
+- Examples use only their 4 facts: no works, no places, no opinions.
+- Parked: Mortimer's example adds details not in its facts (career, nickname, present-day claim). Not changed.
+**Verified:** tsc + lint exit 0. Compare script: Mortimer still IDENTICAL (1,685 chars); Historian + Kid prompts printed and read in full.
+**Mistake caught:**
+- Accidentally sent my API key into the session by highlighting a line in .env.local; rotated it in Anthropic, .env.local, and Vercel.
+- Example drafts named movies not in their facts, which would teach the model to invent filmographies; caught in review and fixed.
+
+### 2026-10-27 — Phase 2 Step 3: Narrate route uses personas
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 2, Step 3 only: /api/narrate reads ?persona=, checks it against the allow-list (missing or invalid → mortimer), and passes it to buildSystemPrompt. Guards, schema, timeout, and cost log stay the same. Show me the diff and the test plan: the same legend under all 3 personas, a bad persona falling back to Mortimer, Elvira still rejected. Stop after Step 3. / Follow-up: Approved with persona in cost log and test #8
+**Why:** Let each tour stop be narrated in the chosen voice while the facts and guardrails stay identical.
+**Result:**
+- toPersona() turns ?persona= into a real persona (missing/unknown/"constructor" → Mortimer); route uses buildSystemPrompt(persona); cost log shows persona.
+- Removed the temporary NARRATOR_SYSTEM_PROMPT export.
+**Verified:** tsc + lint exit 0. Lugosi under all 3 personas = 200 with the right sign-off; vampire/constructor → Mortimer; Elvira 400 with no AI call; Vincent Price (Historian) admits the missing burial place. ~$0.00017–0.00018/call.
+**Mistake caught:** First two calls hit the 8s Wikidata timeout (504, friendly message, no AI call); retry worked. Narrations still run long (83–95 words), add filler, and make present-day claims (already parked).
+
+### 2026-10-27 — Phase 2 Step 3b: Narration quality
+**Tool:** Claude Code (manual mode)
+**Prompt:** Step 3b: narration quality. (1) Show me Mortimer's example and point out each detail not in his facts. Propose a fixed example that uses only his facts; IDENTICAL will change on purpose, so log it. (2) Add a rule: no present-day claims (nothing about today, still, or now). (3) Enforce the 80-word limit in code. Recommend either rejecting over-limit narrations or lowering max_tokens, and explain the tradeoff. Show the diff and stop. / Follow-ups: Step 3b: approved with option A, remove the Kid "now," target 55–70… / Approved, apply the trims and run checks 1–5 / When you show the FORMAT diff, also: (1) add a sentence limit, "4 short sentences, then the sign-off," since models follow sentence counts better than word counts. (2) Trim all three examples to about 55 words each, since examples set the length more than rules do. Show me both diffs, then re-run the 5 tests.
+**Why:** Narrations ran long, added filler, and made present-day claims; Mortimer's example modeled invented details.
+**Result:**
+- Mortimer's example rewritten to use only its 4 facts (Mortimer's prompt changed on purpose: compare script now DIFFERENT). All examples are 4 sentences + sign-off, 54–58 words. Kid "now" removed.
+- New RULES line: no present-day claims. FORMAT asks for 4 short sentences. Code drops any narration over 80 words (facts still shown, word count logged).
+**Verified:** tsc + lint exit 0. Word-target version: 3 of 5 live tests dropped (81/83/86 words). Sentence version: 0 of 5 dropped, 53–72 words, 1 "still" (Historian).
+**Mistake caught:** A word-count target (55–70) didn't shorten anything: models don't count words. Switching to a sentence count + shorter examples fixed it. Historian still makes present-day claims (parked).
+
+### 2026-10-27 — Phase 2 Step 4: Narrator picker
+**Tool:** Claude Code (manual mode)
+**Prompt:** Start Phase 2, Step 4: the narrator picker. Send labels only to the browser, default to Mortimer, and have visit() add &persona=. Show the diff and stop. / Follow-ups: …and add "re-narrate on switch" to parked.md. / Approved. Save Step 4, then run tsc, lint, and the curl check that the prompt text isn't in the page. / One addition to Step 4: the intro card's step 3 still says "Hear Mortimer's tale." Change it to "Hear your narrator's tale and see the grave on the map." Then propose the log entry, commit, and push.
+**Why:** Let visitors choose the narrator's voice without ever sending the prompt text to the browser.
+**Result:**
+- page.tsx (server) passes only { id, label } + the default (Mortimer) to TourGuide; the picker uses hidden radio buttons so the keyboard works; visit() adds &persona=.
+- Intro card step 3 now says "your narrator". Parked: re-narrate on switch.
+**Verified:** tsc + lint exit 0. Curl check: all 4 labels found; 8 prompt phrases absent from the page and its 18 JS files. Browser test (Lance): Mortimer is the default, each narrator gives its own sign-off on Lugosi, the arrow keys switch narrators, and the intro now says "your narrator."
+**Mistake caught:** The intro card still named Mortimer after personas existed (caught by Lance in the browser test).
+
+### 2026-10-28 — Phase 3a Step 1: shared AI cost log
+**Tool:** Claude Code
+**Prompt:** "Yes, move MODEL with the prices. Before making the edits, show me git log --oneline -3 and git status right here. Then make the edits and propose lint, build, and the Lugosi test."
+**Why:** The planner route (Step 2) also calls the AI, so the model, prices, and cost-log line need one shared home instead of a copy.
+**Result:**
+- New `lib/aiCost.ts`: `AI_MODEL`, Haiku 5.5 prices, and `logAiCost()`.
+- `app/api/narrate/route.ts` imports them; no behavior change.
+**Verified:** lint and build passed; Lugosi + Mortimer printed `[narrate] persona=mortimer tokens in=933 out=137 · est $0.000162/call`, same format as before.
+**Mistake caught:** none
+
+### 2026-10-28 — Phase 3a Step 2: AI Tour Planner route
+**Tool:** Claude Code
+**Prompt:** "Approved. Keep the two extra tests and add "asdfghjkl" as a test. Accept gaps 1–3 as-is and add a one-line note about the weak gibberish check to parked.md. Save, then propose lint, build, and the curl tests."
+**Why:** Visitors describe a tour in plain words and the AI picks from the 20-legend roster; nothing is saved yet.
+**Result:**
+- New `POST /api/plan` + `lib/planPrompt.ts`: input checks before the AI, roster-only prompt, ID enum in the schema, server filter + de-dupe + `validateTour`, `logAiCost("plan")`, 429 busy message.
+- Fallback name "Midnight Hearse Route"; "nothing fits" → 422. Weak gibberish check and loose "silent" pick parked.
+**Verified:** lint + build passed. 7 curl tests: normal 200; injection 422 (no Elvis/Elvira); empty, 500 chars, "12345 !!!" → 400 with no AI call; "pizza recipes" and "asdfghjkl" → 422. 4 cost lines, ~$0.15 per 1,000 calls.
+**Mistake caught:** I said 8 test requests but listed 7 (caught by Lance).
+
+### 2026-10-28 — Phase 3b Step 1: Planner screen
+**Tool:** Claude Code
+**Prompt:** "Propose Phase 3b, Step 1 only: the planner screen. Text box with a character counter (max 300), a "Plan my tour" button, loading and error states, and the result shown as legend names. No Save yet. For the narrator: reuse the existing narrator picker's choice instead of adding a second picker. Show the diff and stop." / Follow-ups: move the 300 limit into lib/planLimits.ts; Enter submits + hint + enterKeyHint="go"; clear error on change; ✕ button; suggestion chips; ✕ = fresh start; chips fill only; any text change clears the route; only the latest request's answer is shown.
+**Why:** Visitors can describe a tour and see the AI's route before saving (Save is the next step).
+**Result:**
+- New `app/TourPlanner.tsx` under the search box: counter, Plan button, inline "Planning…", errors, numbered route, narrator line from the existing picker, "Route picked by AI from our roster."
+- `lib/planLimits.ts` holds the 300 limit for both the route and the screen. Enter/Shift+Enter, ✕ fresh start, 4 chips that fill + focus, request numbering so an older answer is never shown.
+**Verified:** lint + build passed. Browser tests (Lance): normal plan, pizza, gibberish, empty/spaces, narrator line, phone width, Enter/Shift+Enter, ✕, chips fill only, deleting clears the route, no stray list. Retest sent 3 AI calls for 3 plans.
+**Mistake caught:** Chips that planned on one tap made results feel random; reverted to fill-only. A different list appeared after deleting text; I couldn't confirm the cause from code or logs, so requests are now numbered and only the newest answer can show.
+
+### 2026-10-28 — Map: no zoom on page scroll
+**Tool:** Claude Code
+**Prompt:** "After this step is committed, a separate small step: the Leaflet map should not zoom on mouse-wheel scroll; keep the + / − buttons. Don't start until I say go." / Follow-up: "Approved, keep double-click zoom. One addition: on touch devices, turn off one-finger map dragging so a one-finger swipe scrolls the page. Pinch and + / − still work."
+**Why:** Scrolling down the page zoomed the map whenever the mouse passed over it.
+**Result:**
+- `app/TourMap.tsx`: `scrollWheelZoom: false`; `dragging: !L.Browser.mobile`, so on phones one finger scrolls the page (Leaflet's CSS then allows page panning) and pinch still zooms.
+- Parked: click-to-explore map (Should); review skipDangerousModePermissionPrompt after the gate.
+**Verified:** lint + build passed. Desktop test (Lance): the page scrolls over the map; + / − and double-click zoom. Phone swipe not tested yet.
+**Mistake caught:** I said the attribution setting's JSON check could run, but the edit had never been saved; caught before committing, then saved and re-checked.
+
+### 2026-10-28 — Phase 3b Step 2: Save button
+**Tool:** Claude Code
+**Prompt:** "Then propose Phase 3b, Step 2 only: the Save button. Show the diff and stop." / Follow-up: "Approved with changes: (1) Add a Copy button next to the share link that shows "Copied!" briefly, with a fallback if the clipboard isn't allowed. (2) Park "editable tour name." (3) In cleanup, keep one saved tour for Phase 4 testing and delete the rest."
+**Why:** A planned route can now be saved to Postgres and shared; only the creator's browser holds the delete code.
+**Result:**
+- "Save this tour" sends name + legend IDs + the narrator picked at that moment to POST /api/tours; shows the share link with Copy ("Copied!", or selects the link if the clipboard is blocked).
+- `app/tourCodes.ts` keeps delete codes in localStorage["hht-tour-codes"] (try/catch; warns if the browser won't keep it). Parked: editable tour name, My Tours list.
+**Verified:** lint + build passed. Browser tests (Lance): save, copy, narrator lock, double-click (one save), delete-a-letter clears. Server log: 5 saves = 5 POST /api/tours 201. curl GET /api/tours/lyJkV7VB → 200 with name, 4 legends, persona kid, no hash.
+**Mistake caught:** My read-only database script printed createdAt 7 hours off (it read the stored UTC time as local time); the API's time was correct.
+
+### 2026-10-28 — Phase 4 Step 1: Shared tour stop card
+**Tool:** Claude Code
+**Prompt:** "Propose Phase 4, Step 1 only: pull TourStopCard, formatDate, and the dynamic TourMap import out of TourGuide.tsx into their own file, so the share page can reuse them. No behavior change. Show the diff and stop."
+**Why:** The share page needs the exact same card (facts, map, narration, honesty label) without copying it.
+**Result:**
+- New `app/TourStopCard.tsx`: the card, the `ssr: false` map import, `TourStop`, `LABEL`, `formatDate`, and `ENTRANCE_EVENT` (moved too, so the card and TourGuide don't import each other).
+- `TourGuide.tsx` imports the card; `SiteTitle.tsx` imports the event from the card file.
+**Verified:** lint + build passed. Text check: each piece defined in one place; the moved card matches the last commit word for word except `export default`. Browser test (Lance): Lugosi card + map + narration, Karloff fallback, back button and site title return to the intro.
+**Mistake caught:** none. Noted for Step 2: on the share page, nothing listens for the card's "back" event.
+
+### 2026-10-28 — Phase 4 Step 2: Share page /tour/[id]
+**Tool:** Claude Code
+**Prompt:** "Then propose Phase 4, Step 2: the /tour/[id] share page. Show the diff and stop." / Follow-up: "Test 8 failed: clicking the share link text in the planner does nothing, and it doesn't look clickable. Fix: (1) Make the link text a real link that opens the tour page, underlined with a hover color. (2) Add an "Open tour →" button next to Copy."
+**Why:** A saved tour needs a page anyone can open from its link, narrated in the tour's saved voice.
+**Result:**
+- New `app/tour/[id]/`: layout (background + title linking home), page (DB read inside Suspense after connection(); notFound for bad or missing IDs; names from the roster), TourStops (numbered stops → shared card in the saved persona), themed "vanished into the fog" not-found page.
+- TourStopCard takes onBack/backLabel ("← Back to the stop list" here); SiteTitle takes href. Planner: "Open tour →" + "Copy link" + an underlined, clickable share link.
+**Verified:** lint + build passed (/tour/[id] is Partial Prerender). HTML check: tour name, Historian label, stops present; deleteCodeHash and 7 prompt phrases absent; both missing-tour URLs show the vanished page (status 200, as the docs say for notFound after streaming starts). Browser tests 1–8 (Lance) passed, including incognito.
+**Mistake caught:** The first share link didn't open and barely looked like a link. The code was already a real link, so the likely cause (unconfirmed) was a tab still running the earlier plain-text version; the dim rust underline explains why it didn't look clickable. Fixed with Open tour → and an amber underline. Also: my first HTML check failed because I named a zsh loop variable `path`, which replaces the command search path.
+
+### 2026-10-28 — Phase 4 Step 3: Delete tour button
+**Tool:** Claude Code
+**Prompt:** "Then propose Phase 4, Step 3: the Delete tour button, shown only in the browser that created the tour. Show the diff and stop." / Follow-ups: "Approved, including the 3 decisions." / "Propose a one-time cleanup that deletes every tour except gGdHqlNL. List the IDs first and wait for my approval."
+**Why:** Only the creator can remove a shared tour, using the delete code kept in their browser.
+**Result:**
+- `app/tourCodes.ts` adds getDeleteCode / forgetDeleteCode; TourStops reads the code with useSyncExternalStore (server shows no button), two-click inline confirm (Delete tour → Yes, delete / Keep it), code sent in the x-delete-code header; 404 counts as already deleted.
+- One-time cleanup (scratchpad script, exact ID list): deleted 10 test tours; only gGdHqlNL remains.
+**Verified:** lint + build passed. Browser tests (Lance): Yes, delete → "Tour deleted" → reload shows vanished; Keep it cancels; incognito shows no Delete box. Server log: DELETE /api/tours/fJCmk1AJ 200. Listing after cleanup: 1 tour (gGdHqlNL).
+**Mistake caught:** I expected 6 extra tours; the listing found 10 (more were saved during later tests), so the cleanup used a fresh ID list.
+
+### 2026-10-28 — Polish: chips + Back to the Hearse
+**Tool:** Claude Code
+**Prompt:** "After Delete is committed, a small polish step: (1) capitalize the 4 planner chips (Silent-Film Monsters, Universal Classics, Horror Writers, Dracula Connections); (2) add a clear "← Back to the Hearse" link at the top of the tour page, in the site's spooky style, that goes home."
+**Why:** Chips read as titles, and visitors arriving from a shared link get an obvious way home.
+**Result:**
+- Planner chips capitalized (the placeholder stays lowercase).
+- "← Back to the Hearse" pill in the tour layout, so it shows on the tour page and the vanished page. Parked: flickering back-arrow, longer blood drips.
+**Verified:** Browser tests (Lance): chips capitalized and planning works; the link glows and goes home on both pages; phone width fits. lint + build not run for this step (they run in Phase 5 Step 1).
+**Mistake caught:** none
+
+### 2026-10-28 — Phase 5 Step 1: Pre-deploy checks + README
+**Tool:** Claude Code
+**Prompt:** "Then propose Phase 5, Step 1 only: final pre-deploy checks: confirm Leaflet loads client-side only on both pages, a clean build, and a README update (setup, env vars, Prisma commands, live link placeholder, and a "How this was built" section I'll write myself). Show the plan and stop." / Follow-ups: fix outdated sections; keep the in-app AI bullets, drop "Building it"; yes to npm ci; fill "How this was built" with my text exactly.
+**Why:** Prove the app builds from scratch the way Vercel will, and make the README match what's actually built.
+**Result:**
+- Leaflet: imported only in TourMap.tsx, loaded only via `dynamic(..., { ssr: false })` in a client file; both pages reach it through client components; production-server HTML of / and /tour/gGdHqlNL has 0 Leaflet markup.
+- README: narrators, planner, Save/share/Delete, Neon + Prisma, 3 env vars (names only), Prisma commands, planner and saved-tour guardrails, planner cost, live-link placeholder, "How this was built" (Lance's text).
+**Verified:** rm -rf .next → npm ci (498 packages, Prisma client regenerated, 0 vulnerabilities) → lint + build passed → prisma migrate status "Database schema is up to date!" → git status clean.
+**Mistake caught:** The parked "npm audit warnings" note is now out of date (npm ci reported 0 vulnerabilities).

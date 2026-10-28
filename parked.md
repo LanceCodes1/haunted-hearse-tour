@@ -2,7 +2,16 @@
 
 Ideas and fixes saved for later. Not in this week's build.
 
-- **Narration runs long:** it comes out around 86 words, over the prompt's 60–80 target (Vincent Price hit ~100 in a later test). W7 fix: a hard word-count check in the narrate route that drops or flags any narration over 80 words (today's shape check allows up to 1,200 characters, about 200 words).
+## Should
+
+- **Click-to-explore map:** map sleeps until clicked; when awake, wheel zooms and drag pans; click outside or mouse-leave puts it back to sleep. No right-click zoom.
+- **My Tours list:** show tours this browser created, using the saved delete codes.
+- **Flickering back-arrow** next to the site title, same style and flicker as the title, with a subtle "back" hint. Keep the text button too.
+- **Longer blood drips:** extend the edge drips (left and right ends, second-to-end) about half an inch, and the drip under "HEARSE" a bit. Keep the alternating short/long/medium pattern.
+
+## Later
+
+- **Narration runs long:** it comes out around 86 words, over the prompt's 60–80 target (Vincent Price hit ~100 in a later test). W7 fix: a hard word-count check in the narrate route that drops or flags any narration over 80 words (today's shape check allows up to 1,200 characters, about 200 words). (done in Phase 2 Step 3b)
 - **Filler line:** the narration adds "the record books go quiet" even when no fact is missing.
 - **Notable-work field from Wikidata (W7):** pull a legend's famous work from Wikidata instead of the AI's general knowledge.
 - **Cache Wikidata answers:** don't ask Wikidata again for the same legend.
@@ -14,6 +23,21 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Search any legend beyond the 20 (W7):** needs a Wikidata name search, handling the wrong person with the same name, and the general cemetery check above.
 - **Smaller pin image:** `map-pin.png` is about 900 KB (1713×918) and Leaflet loads it at full size. A cropped, small copy would make the map faster.
 - **Phase 2 CRUD moved to W7:** saving a tour route with Prisma + Neon. Missed the Thursday 3 PM checkpoint.
+- Graves Visited counter (site-wide vs per-visitor undecided).
+- **Pin older dependencies:** `@anthropic-ai/sdk`, `leaflet`, `tailwindcss`, `typescript`, `eslint`, and the `@types/*` packages still use `^` ranges. Pin them to exact versions (no rc/beta/canary).
+- **Stray lockfile in home folder:** `next dev` warns about a `package-lock.json` in `/Users/lancegonzalez`, outside this repo. Check what created it and remove it (or set `turbopack.root`) before the Vercel deploy.
+- Custom domain after the gate.
+- Turn Vercel preview protection back on after the gate.
+- Per-IP rate limiting.
+- **Neutral missing-fact phrase in shared RULES:** the rule's sample "the record books go quiet here" is Mortimer's voice. For now each persona shows its own missing-fact phrasing in its example. Changing RULES would also change Mortimer's prompt.
+- **Mortimer's example adds details not in its facts:** "swept across the silver screen in a cloak of shadows," the nickname "the Raven Queen," "audiences gripped their armrests for decades after," and "still the most commanding presence after midnight" (a present-day claim). It names no work, but it models inventing a career. Rewrite it to use only its 4 facts (this will change Mortimer's prompt, so re-test narration).
+- **All personas make present-day claims; tighten RULES or examples:** Phase 2 Step 3 tests showed "audiences still lean forward," "still raises gooseflesh decades later" (Mortimer) and "still stands as the figure against which later vampires are measured" (Historian).
+- **Re-narrate on switch:** changing the narrator only affects the next stop. Re-narrating the card on screen would add an AI call per switch.
+- **Weak planner gibberish check:** `/api/plan` only rejects text with no letters, so "asdfghjkl" still costs one AI call (the roster enum + server filter keep it harmless).
+- **Planner reads "silent" loosely:** "silent-film monsters" returned Lugosi, Karloff, and Lorre (early sound films) alongside Chaney and Browning. All picks were roster-only; the prompt could be tightened.
+- Floating ghost button with tour categories (Should, after Musts).
+- Review skipDangerousModePermissionPrompt in ~/.claude/settings.json after the gate.
+- **Editable tour name:** the saved name is the AI's title; let the creator change it before saving.
 
 ## Showcase (weekend)
 

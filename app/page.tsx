@@ -1,8 +1,10 @@
 // Server component: builds the roster list on the server, so no roster or Wikidata code reaches the browser.
 import Image from "next/image";
+import type { Persona } from "@/lib/generated/prisma/enums";
+import { DEFAULT_PERSONA, PERSONAS } from "@/lib/personas";
 import { ROSTER } from "@/lib/roster";
 import SiteTitle from "./SiteTitle";
-import TourGuide, { type TourName } from "./TourGuide";
+import TourGuide, { type NarratorOption, type TourName } from "./TourGuide";
 
 export default function Home() {
   // Test-only entries (Elvira) are for guardrail tests, not the public tour
@@ -14,6 +16,8 @@ export default function Home() {
   }));
   // Living test names go to the search box only, so it can reject them before any API call
   const living = ROSTER.filter((legend) => legend.testOnly).map(({ id, name }) => ({ id, name }));
+  // Labels only: the persona prompts stay on the server; the browser just needs names for the picker
+  const narrators: NarratorOption[] = Object.entries(PERSONAS).map(([id, { label }]) => ({ id: id as Persona, label }));
 
   return (
     <div className="relative flex flex-1 flex-col">
@@ -29,7 +33,7 @@ export default function Home() {
       </header>
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 md:px-6">
-        <TourGuide tour={tour} living={living} />
+        <TourGuide tour={tour} living={living} narrators={narrators} defaultNarrator={DEFAULT_PERSONA} />
       </main>
     </div>
   );

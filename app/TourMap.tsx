@@ -12,7 +12,9 @@ export default function TourMap({ lat, lon, place }: { lat: number; lon: number;
 
   useEffect(() => {
     if (!box.current) return;
-    const map = L.map(box.current).setView([lat, lon], 15); // centered on the grave
+    // Scrolling the page past the map shouldn't zoom it (+ / − and double-click still zoom).
+    // On phones, one finger scrolls the page instead of dragging the map; pinch still zooms.
+    const map = L.map(box.current, { scrollWheelZoom: false, dragging: !L.Browser.mobile }).setView([lat, lon], 15); // centered on the grave
 
     // Free OpenStreetMap tiles; the attribution is required by OSM
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {

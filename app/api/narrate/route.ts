@@ -3,16 +3,14 @@ import Anthropic from "@anthropic-ai/sdk";
 import { connection, type NextRequest } from "next/server";
 import { WikidataError } from "@/lib/wikidata";
 import { getRosterFacts } from "@/lib/roster";
-import { NARRATOR_SYSTEM_PROMPT } from "@/lib/narratorPrompt";
+import { buildSystemPrompt } from "@/lib/narratorPrompt";
+import { toPersona } from "@/lib/personas";
+import { AI_MODEL, logAiCost } from "@/lib/aiCost";
 
-const MODEL = "claude-haiku-5-5";
 const MAX_INPUT_CHARS = 1000; // cost guard: never send more than this to the AI
 const MAX_OUTPUT_TOKENS = 400; // cost guard: hard cap on how much the AI can write
 const AI_TIMEOUT_MS = 10_000; // give up on the AI after 10 seconds
-
-// Haiku 5.5 prices per 1 million tokens (prompts under 100K tokens)
-const INPUT_PRICE_PER_M = 0.1;
-const OUTPUT_PRICE_PER_M = 0.5;
+const MAX_WORDS = 80; // the prompt asks for 4 short sentences; this is the code check that makes 80 a real limit
 
 // The exact JSON shape the AI must return: a title and one paragraph, nothing else
 const NARRATION_SCHEMA = {
@@ -43,6 +41,8 @@ function parseNarration(raw: string): Narration | null {
 
 export async function GET(request: NextRequest) {
   await connection(); // run on every request, never prerendered at build time
+  // Persona only picks the voice; the facts, guards, and limits below are the same for all three
+  const persona = toPersona(request.nextUrl.searchParams.get("persona"));
 
   // 1. Facts first: roster check, Wikidata, and living-person check. If any fails, the AI is never called.
   let facts;
@@ -69,25 +69,21 @@ export async function GET(request: NextRequest) {
     const client = new Anthropic(); // reads ANTHROPIC_API_KEY from .env.local, on the server only
     const response = await client.messages.create(
       {
-        model: MODEL,
+        model: AI_MODEL,
         max_tokens: MAX_OUTPUT_TOKENS,
         thinking: { type: "disabled" }, // Haiku 5.5 thinks by default; a short narration doesn't need it
         output_config: {
           effort: "low",
           format: { type: "json_schema", schema: NARRATION_SCHEMA }, // force the title + text shape
         },
-        system: NARRATOR_SYSTEM_PROMPT,
+        system: buildSystemPrompt(persona),
         messages: [{ role: "user", content: factsForAI }],
       },
       { timeout: AI_TIMEOUT_MS, maxRetries: 0 }, // no silent retries, so 10 seconds really means 10 seconds
     );
 
-    // Cost log: tokens used and estimated price, per call and per 1,000 calls
-    const { input_tokens, output_tokens } = response.usage;
-    const cost = (input_tokens * INPUT_PRICE_PER_M + output_tokens * OUTPUT_PRICE_PER_M) / 1_000_000;
-    console.log(
-      `[narrate] tokens in=${input_tokens} out=${output_tokens} · est $${cost.toFixed(6)}/call · $${(cost * 1000).toFixed(3)} per 1,000 calls`,
-    );
+    // Persona is logged because each voice has a different-length prompt, so cost differs a little per persona.
+    logAiCost("narrate", response.usage, `persona=${persona}`);
 
     // Bad output check: the AI must finish normally (not cut off, not refused)
     if (response.stop_reason !== "end_turn") {
@@ -99,6 +95,13 @@ export async function GET(request: NextRequest) {
     const narration = parseNarration(raw);
     if (!narration) {
       console.error("[api/narrate] AI output didn't match the expected shape:", raw);
+      return Response.json({ ...facts, narration: null, narrationError: "Our tour guide lost their voice. Here are the facts for now." });
+    }
+
+    // Bad output check: over-long narrations are dropped, not trimmed (trimming would cut off the sign-off)
+    const words = narration.text.split(/\s+/).length;
+    if (words > MAX_WORDS) {
+      console.error(`[api/narrate] Narration too long (${words} words, limit ${MAX_WORDS}), dropped`);
       return Response.json({ ...facts, narration: null, narrationError: "Our tour guide lost their voice. Here are the facts for now." });
     }
 
