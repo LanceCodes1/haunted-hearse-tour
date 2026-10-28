@@ -26,6 +26,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Re-narrate on switch:** changing the narrator only affects the next stop. Re-narrating the card on screen would add an AI call per switch.
 - **Weak planner gibberish check:** `/api/plan` only rejects text with no letters, so "asdfghjkl" still costs one AI call (the roster enum + server filter keep it harmless).
 - **Planner reads "silent" loosely:** "silent-film monsters" returned Lugosi, Karloff, and Lorre (early sound films) alongside Chaney and Browning. All picks were roster-only; the prompt could be tightened.
+- Floating ghost button with tour categories (Should, after Musts).
 
 ## Showcase (weekend)
 

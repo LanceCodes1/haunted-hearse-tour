@@ -884,3 +884,13 @@ Keep each phase small enough for one commit.
 - Fallback name "Midnight Hearse Route"; "nothing fits" → 422. Weak gibberish check and loose "silent" pick parked.
 **Verified:** lint + build passed. 7 curl tests: normal 200; injection 422 (no Elvis/Elvira); empty, 500 chars, "12345 !!!" → 400 with no AI call; "pizza recipes" and "asdfghjkl" → 422. 4 cost lines, ~$0.15 per 1,000 calls.
 **Mistake caught:** I said 8 test requests but listed 7 (caught by Lance).
+
+### 2026-10-28 — Phase 3b Step 1: Planner screen
+**Tool:** Claude Code
+**Prompt:** "Propose Phase 3b, Step 1 only: the planner screen. Text box with a character counter (max 300), a "Plan my tour" button, loading and error states, and the result shown as legend names. No Save yet. For the narrator: reuse the existing narrator picker's choice instead of adding a second picker. Show the diff and stop." / Follow-ups: move the 300 limit into lib/planLimits.ts; Enter submits + hint + enterKeyHint="go"; clear error on change; ✕ button; suggestion chips; ✕ = fresh start; chips fill only; any text change clears the route; only the latest request's answer is shown.
+**Why:** Visitors can describe a tour and see the AI's route before saving (Save is the next step).
+**Result:**
+- New `app/TourPlanner.tsx` under the search box: counter, Plan button, inline "Planning…", errors, numbered route, narrator line from the existing picker, "Route picked by AI from our roster."
+- `lib/planLimits.ts` holds the 300 limit for both the route and the screen. Enter/Shift+Enter, ✕ fresh start, 4 chips that fill + focus, request numbering so an older answer is never shown.
+**Verified:** lint + build passed. Browser tests (Lance): normal plan, pizza, gibberish, empty/spaces, narrator line, phone width, Enter/Shift+Enter, ✕, chips fill only, deleting clears the route, no stray list. Retest sent 3 AI calls for 3 plans.
+**Mistake caught:** Chips that planned on one tap made results feel random; reverted to fill-only. A different list appeared after deleting text; I couldn't confirm the cause from code or logs, so requests are now numbered and only the newest answer can show.

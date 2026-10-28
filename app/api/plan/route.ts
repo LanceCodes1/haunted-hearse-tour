@@ -2,10 +2,10 @@
 // It only plans; nothing is saved until the visitor presses Save (POST /api/tours).
 import Anthropic from "@anthropic-ai/sdk";
 import { AI_MODEL, logAiCost } from "@/lib/aiCost";
+import { MAX_REQUEST_CHARS } from "@/lib/planLimits";
 import { PLANNER_ROSTER, PLANNER_SYSTEM_PROMPT } from "@/lib/planPrompt";
 import { MAX_LEGENDS, MAX_NAME_CHARS, validateTour } from "@/lib/tours";
 
-const MAX_REQUEST_CHARS = 300; // cost guard: a tour wish fits in a sentence or two
 const MAX_OUTPUT_TOKENS = 300; // cost guard: a name + up to 6 IDs is far less than this
 const AI_TIMEOUT_MS = 10_000; // give up on the AI after 10 seconds
 const FALLBACK_NAME = "Midnight Hearse Route"; // used if the AI's title is empty or too long

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Persona } from "@/lib/generated/prisma/enums";
 import IntroPanel from "./IntroPanel";
 import { checkSearch, type LivingName } from "./searchCheck";
+import TourPlanner from "./TourPlanner";
 
 // Leaflet needs the browser, so the map skips server rendering and loads on the client only
 const TourMap = dynamic(() => import("./TourMap"), {
@@ -179,6 +180,9 @@ export default function TourGuide({
             </div>
           )}
         </form>
+
+        {/* AI Tour Planner: shows the narrator picked above instead of a second picker */}
+        <TourPlanner narratorLabel={narrators.find((narrator) => narrator.id === persona)?.label ?? ""} />
 
         {groups.map((group) => (
           <section key={group}>
