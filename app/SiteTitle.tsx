@@ -1,6 +1,6 @@
 "use client";
 // Front end: the flickering site title. Clicking it goes back to the tour entrance (the intro panel).
-import { ENTRANCE_EVENT } from "./TourGuide";
+import { ENTRANCE_EVENT } from "./TourStopCard";
 
 export default function SiteTitle() {
   return (

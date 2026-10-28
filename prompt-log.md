@@ -914,3 +914,13 @@ Keep each phase small enough for one commit.
 - `app/tourCodes.ts` keeps delete codes in localStorage["hht-tour-codes"] (try/catch; warns if the browser won't keep it). Parked: editable tour name, My Tours list.
 **Verified:** lint + build passed. Browser tests (Lance): save, copy, narrator lock, double-click (one save), delete-a-letter clears. Server log: 5 saves = 5 POST /api/tours 201. curl GET /api/tours/lyJkV7VB → 200 with name, 4 legends, persona kid, no hash.
 **Mistake caught:** My read-only database script printed createdAt 7 hours off (it read the stored UTC time as local time); the API's time was correct.
+
+### 2026-10-28 — Phase 4 Step 1: Shared tour stop card
+**Tool:** Claude Code
+**Prompt:** "Propose Phase 4, Step 1 only: pull TourStopCard, formatDate, and the dynamic TourMap import out of TourGuide.tsx into their own file, so the share page can reuse them. No behavior change. Show the diff and stop."
+**Why:** The share page needs the exact same card (facts, map, narration, honesty label) without copying it.
+**Result:**
+- New `app/TourStopCard.tsx`: the card, the `ssr: false` map import, `TourStop`, `LABEL`, `formatDate`, and `ENTRANCE_EVENT` (moved too, so the card and TourGuide don't import each other).
+- `TourGuide.tsx` imports the card; `SiteTitle.tsx` imports the event from the card file.
+**Verified:** lint + build passed. Text check: each piece defined in one place; the moved card matches the last commit word for word except `export default`. Browser test (Lance): Lugosi card + map + narration, Karloff fallback, back button and site title return to the intro.
+**Mistake caught:** none. Noted for Step 2: on the share page, nothing listens for the card's "back" event.
