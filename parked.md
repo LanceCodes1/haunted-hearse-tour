@@ -12,7 +12,7 @@ Ideas and fixes saved for later. Not in this week's build.
 ## Later
 
 - **Narration runs long:** it comes out around 86 words, over the prompt's 60–80 target (Vincent Price hit ~100 in a later test). W7 fix: a hard word-count check in the narrate route that drops or flags any narration over 80 words (today's shape check allows up to 1,200 characters, about 200 words). (done in Phase 2 Step 3b)
-- **Filler line:** the narration adds "the record books go quiet" even when no fact is missing.
+- **Filler line:** the narration adds "the record books go quiet" even when no fact is missing. (done in the narration honesty fix: the server sends `missingFacts`)
 - **Notable-work field from Wikidata (W7):** pull a legend's famous work from Wikidata instead of the AI's general knowledge.
 - **Cache Wikidata answers:** don't ask Wikidata again for the same legend.
 - **Cache narrations:** repeat visits to the same legend cost $0.
@@ -29,7 +29,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - Custom domain after the gate.
 - Turn Vercel preview protection back on after the gate.
 - Per-IP rate limiting.
-- **Neutral missing-fact phrase in shared RULES:** the rule's sample "the record books go quiet here" is Mortimer's voice. For now each persona shows its own missing-fact phrasing in its example. Changing RULES would also change Mortimer's prompt.
+- **Neutral missing-fact phrase in shared RULES:** the rule's sample "the record books go quiet here" is Mortimer's voice. For now each persona shows its own missing-fact phrasing in its example. Changing RULES would also change Mortimer's prompt. (done in the narration honesty fix: the quoted phrase was removed from RULES)
 - **Mortimer's example adds details not in its facts:** "swept across the silver screen in a cloak of shadows," the nickname "the Raven Queen," "audiences gripped their armrests for decades after," and "still the most commanding presence after midnight" (a present-day claim). It names no work, but it models inventing a career. Rewrite it to use only its 4 facts (this will change Mortimer's prompt, so re-test narration).
 - **All personas make present-day claims; tighten RULES or examples:** Phase 2 Step 3 tests showed "audiences still lean forward," "still raises gooseflesh decades later" (Mortimer) and "still stands as the figure against which later vampires are measured" (Historian).
 - **Re-narrate on switch:** changing the narrator only affects the next stop. Re-narrating the card on screen would add an AI call per switch.
@@ -38,6 +38,9 @@ Ideas and fixes saved for later. Not in this week's build.
 - Floating ghost button with tour categories (Should, after Musts).
 - Review skipDangerousModePermissionPrompt in ~/.claude/settings.json after the gate.
 - **Editable tour name:** the saved name is the AI's title; let the creator change it before saving.
+- **Historian adds details not in the facts and uses present tense:** "the Hungarian-born actor," "the 1931 film Dracula," "stands as a cornerstone," "is buried at." A persona-only fix (voice rule + past-tense example) removed the birthplace but added the film year in 2/2 runs, so it was reverted.
+- **Kid "is resting. He rests at…" repetition:** the Kid example only shows a missing grave; it needs a known-grave version that says both in one sentence.
+- **Kid occasional "still" claims:** e.g. "still gives fans goosebumps," "still makes shadows dance."
 
 ## Showcase (weekend)
 
