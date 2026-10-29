@@ -1019,3 +1019,13 @@ Keep each phase small enough for one commit.
 - Tour page: "Want your own? Plan a tour →" pill links to /#plan (the planner section's new id). Thunder with an off-by-default toggle parked under Should.
 **Verified:** lint + build passed after each change. Lance's local tests passed: bounce, drip, clicks during the flash, sky-only glow, branching bolt, pill lands on the planner. Reduce motion handled in CSS; not retested by hand after the sky-glow change. ✕ already showed for text or a route (no change needed).
 **Mistake caught:** The first full-screen flash read as a screen glitch, so it became a sky-only glow. Correction to the previous entry: PR #2 merged before the later pushes arrived; nobody made a mistake.
+
+### 2026-10-28 — Should: 15-second storm cycle
+**Tool:** Claude Code
+**Prompt:** "Phone test passed. One timing tweak, as its own small commit on top of the motion pack: slow everything to one 15-second cycle. The title flickers at the start, and the lightning (sky glow plus bolt) strikes about 3 seconds after the flicker. Keep everything else the same, including reduced motion. Show the diff, save, run lint and build, then I'll check it locally."
+**Why:** Every 6s felt busy; a slower storm with a clear order (flicker, pause, strike) feels more deliberate.
+**Result:**
+- Title flicker, sky glow, and bolt share one 15s cycle: the same two flicker bursts in the first 2.5s, then the strike at 5.4s with the same 0.12s rise and 0.42s fade.
+- Bounce, drip, glow brightness, bolt shape, click-through, and Reduce motion unchanged; SiteTitle comment updated from 6s to 15s.
+**Verified:** lint + build passed; Lance checked the timing locally. The motion pack itself passed on the phone preview.
+**Mistake caught:** none
