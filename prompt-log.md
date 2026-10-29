@@ -997,3 +997,35 @@ Keep each phase small enough for one commit.
 - Reverted `lib/personas.ts` to a28c0de (never committed); parked 3 items (Historian extra details + present tense, Kid repetition needs a known-grave example, Kid "still" claims).
 **Verified:** git status clean after the revert; a28c0de matches on GitHub; parking commit 2f24d67 pushed; dev server stopped. lint + build not run (no code shipped).
 **Mistake caught:** The follow-up made the Historian invent "1931," so I reverted it instead of shipping it. Claude Code committed the parking change (2f24d67), and the honesty fix (a28c0de), without proposing the commit message first.
+
+### 2026-10-28 — PR #3 + live check of the narration honesty fix
+**Tool:** Claude Code
+**Prompt:** "PR #2 merged early with only 1 commit (387f34d). The honesty fix, parking commit, and log entry are still only on week7-gate. Open PR #3 to bring them into main, with no attribution line. Show me the link." / "PR #3 merged (3 commits). Wait for Vercel's production deploy, then ask Lugosi for a Mortimer narration on the live site and confirm there's no gap line."
+**Why:** PR #2 merged before the honesty fix was pushed to it, so the fix wasn't live yet.
+**Result:**
+- PR #3 (a28c0de, 2f24d67, 6e3235b) opened with gh, no attribution line; Lance merged it (main = f7af356).
+- Vercel status on f7af356: "Deployment has completed."
+- Live Lugosi (Mortimer): "He died on August 16, 1956, and was laid to rest at Holy Cross Cemetery." 53 words, no gap line, no figure of speech for the death.
+**Verified:** gh commit status = success; live /api/narrate read in full, plus a word search for gap phrases (none).
+**Mistake caught:** I told Lance PR #2 would carry the later commits, but he merged it at 1 commit; the rest needed PR #3.
+
+### 2026-10-28 — Should: motion pack + "Plan a tour" invite
+**Tool:** Claude Code
+**Prompt:** "Next: a Should "motion pack." (1) The hearse image gently bounces like it's driving. (2) The far-left blood drip runs longer, keeping the short/long/medium pattern. (3) A soft lightning flash on the same cycle as the title flicker. All three respect prefers-reduced-motion and stay photosensitivity-safe. One commit; test on the preview before merging. Propose the plan and stop." / Follow-ups: flash half as bright plus a jagged bolt; park thunder; a "Want your own? Plan a tour →" invite on the tour page that jumps to the planner (#plan); then sky-only glow and a branching bolt.
+**Why:** Make the hearse feel alive and the storm feel real, and give share-link visitors a clear way to plan their own tour.
+**Result:**
+- Hearse bobs 3px with a 0.4° tilt every 1.2s; far-left drip extended 60 units (tip y≈93 → ≈153) with its highlights moved.
+- Lightning: a faint pale-blue glow over the top 45% of the screen plus a bolt (main channel + 4 forks) that draws top-down, once per 6s, at the moment the title dims. Mounted with the title so they stay in sync; never blocks clicks; hidden under Reduce motion.
+- Tour page: "Want your own? Plan a tour →" pill links to /#plan (the planner section's new id). Thunder with an off-by-default toggle parked under Should.
+**Verified:** lint + build passed after each change. Lance's local tests passed: bounce, drip, clicks during the flash, sky-only glow, branching bolt, pill lands on the planner. Reduce motion handled in CSS; not retested by hand after the sky-glow change. ✕ already showed for text or a route (no change needed).
+**Mistake caught:** The first full-screen flash read as a screen glitch, so it became a sky-only glow. Correction to the previous entry: PR #2 merged before the later pushes arrived; nobody made a mistake.
+
+### 2026-10-28 — Should: 15-second storm cycle
+**Tool:** Claude Code
+**Prompt:** "Phone test passed. One timing tweak, as its own small commit on top of the motion pack: slow everything to one 15-second cycle. The title flickers at the start, and the lightning (sky glow plus bolt) strikes about 3 seconds after the flicker. Keep everything else the same, including reduced motion. Show the diff, save, run lint and build, then I'll check it locally."
+**Why:** Every 6s felt busy; a slower storm with a clear order (flicker, pause, strike) feels more deliberate.
+**Result:**
+- Title flicker, sky glow, and bolt share one 15s cycle: the same two flicker bursts in the first 2.5s, then the strike at 5.4s with the same 0.12s rise and 0.42s fade.
+- Bounce, drip, glow brightness, bolt shape, click-through, and Reduce motion unchanged; SiteTitle comment updated from 6s to 15s.
+**Verified:** lint + build passed; Lance checked the timing locally. The motion pack itself passed on the phone preview.
+**Mistake caught:** none

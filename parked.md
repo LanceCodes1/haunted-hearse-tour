@@ -7,7 +7,8 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Click-to-explore map:** map sleeps until clicked; when awake, wheel zooms and drag pans; click outside or mouse-leave puts it back to sleep. No right-click zoom.
 - **My Tours list:** show tours this browser created, using the saved delete codes.
 - **Flickering back-arrow** next to the site title, same style and flicker as the title, with a subtle "back" hint. Keep the text button too.
-- **Longer blood drips:** extend the edge drips (left and right ends, second-to-end) about half an inch, and the drip under "HEARSE" a bit. Keep the alternating short/long/medium pattern.
+- **Longer blood drips:** extend the edge drips (left and right ends, second-to-end) about half an inch, and the drip under "HEARSE" a bit. Keep the alternating short/long/medium pattern. (far-left drip done in the motion pack; the right end, the second-to-end drips, and the drip under "HEARSE" are still to do)
+- **Thunder sound with an off-by-default toggle:** a Web Audio rumble timed to the lightning flash. It only starts after the visitor turns Sound on (browser autoplay rule), and the choice is remembered.
 
 ## Later
 

@@ -125,6 +125,14 @@ export default function TourStops({
         )}
         <p className="px-2 text-xs text-bone/50">Route picked by AI from our roster</p>
 
+        {/* Visitors arrive from a shared link; show them how to make their own */}
+        <Link
+          href="/#plan"
+          className="mx-2 self-start rounded-full bg-blood px-4 py-2 font-sign text-bone transition duration-200 hover:shadow-[0_0_16px_rgba(168,18,31,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
+        >
+          Want your own? Plan a tour →
+        </Link>
+
         {/* Creator only: shown when this browser holds the tour's delete code. Two clicks, no pop-up. */}
         {deleteCode && (
           <div className="mt-2 rounded-2xl border border-blood/60 bg-tar/80 p-3 text-sm text-bone">

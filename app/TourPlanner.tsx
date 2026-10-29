@@ -142,7 +142,8 @@ export default function TourPlanner({ narrator }: { narrator: NarratorOption }) 
   }
 
   return (
-    <section>
+    // id="plan": the share page's "Plan a tour" invite links to /#plan so phone users land right here
+    <section id="plan" className="scroll-mt-4">
       <h2 className="mb-2 px-2 font-sign text-sm uppercase tracking-widest text-amber">Plan a tour</h2>
       <form onSubmit={planTour} className="flex flex-col gap-2">
         <div className="relative">
