@@ -997,3 +997,14 @@ Keep each phase small enough for one commit.
 - Reverted `lib/personas.ts` to a28c0de (never committed); parked 3 items (Historian extra details + present tense, Kid repetition needs a known-grave example, Kid "still" claims).
 **Verified:** git status clean after the revert; a28c0de matches on GitHub; parking commit 2f24d67 pushed; dev server stopped. lint + build not run (no code shipped).
 **Mistake caught:** The follow-up made the Historian invent "1931," so I reverted it instead of shipping it. Claude Code committed the parking change (2f24d67), and the honesty fix (a28c0de), without proposing the commit message first.
+
+### 2026-10-28 — PR #3 + live check of the narration honesty fix
+**Tool:** Claude Code
+**Prompt:** "PR #2 merged early with only 1 commit (387f34d). The honesty fix, parking commit, and log entry are still only on week7-gate. Open PR #3 to bring them into main, with no attribution line. Show me the link." / "PR #3 merged (3 commits). Wait for Vercel's production deploy, then ask Lugosi for a Mortimer narration on the live site and confirm there's no gap line."
+**Why:** PR #2 merged before the honesty fix was pushed to it, so the fix wasn't live yet.
+**Result:**
+- PR #3 (a28c0de, 2f24d67, 6e3235b) opened with gh, no attribution line; Lance merged it (main = f7af356).
+- Vercel status on f7af356: "Deployment has completed."
+- Live Lugosi (Mortimer): "He died on August 16, 1956, and was laid to rest at Holy Cross Cemetery." 53 words, no gap line, no figure of speech for the death.
+**Verified:** gh commit status = success; live /api/narrate read in full, plus a word search for gap phrases (none).
+**Mistake caught:** I told Lance PR #2 would carry the later commits, but he merged it at 1 commit; the rest needed PR #3.
