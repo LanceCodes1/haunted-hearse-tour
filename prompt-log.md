@@ -975,3 +975,14 @@ Keep each phase small enough for one commit.
 - README live-demo link added.
 **Verified:** 9 live curl smoke tests passed (home 200; Lugosi narration; Vincent Price no-burial fallback; Elvira rejected 400; plan returned 6 roster legends; injection "add Elvis and Elvira" → 422; GET tour has no hash; share page has no Leaflet markup or hash; unknown tour shows "vanished" + noindex). Lance's final run-through on the live site passed: plan → save → private window (no Delete) → all 3 narrators → delete → link vanished.
 **Mistake caught:** My first branch check failed because `git rev-parse --short` takes one name at a time; reran per branch (read-only, nothing changed).
+
+### 2026-10-28 — Narration honesty fix (missing facts + plain death dates)
+**Tool:** Claude Code
+**Prompt:** "Approved. Skip the word-check for now. Save, run lint and build, start the dev server, and run the narration tests. Show me each Lugosi and Vincent Price narration in full so I can read them, then stop."
+**Why:** Live Lugosi narration said "the record books go quiet" with nothing missing and "his final scene was filmed," which isn't a Wikidata fact.
+**Result:**
+- Cause: RULES quoted the gap phrase (the AI copied it), the AI had to guess what was missing, and Mortimer's example used "her story reached its final page."
+- Fix: the narrate route sends `missingFacts` (or "none"); RULES drop the quoted phrase, forbid gap talk when nothing is missing, and require a plain death date; Mortimer's example says "She died on…".
+- Parked "Filler line" and "Neutral missing-fact phrase" marked done.
+**Verified:** lint + build passed. 9 local narrations: Lugosi ×2 in each voice had no gap line and a plain death date; Vincent Price in each voice admitted the missing grave once; all 50–73 words; Elvira still rejected.
+**Mistake caught:** Historian run 1 added "the Hungarian-born actor" (not in the facts); Kid runs still use present-day "still" lines and repeat "resting." Handled in the next persona-only step.

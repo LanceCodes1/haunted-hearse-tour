@@ -13,16 +13,18 @@ const RULES = `RULES
 - Burial place, dates, and coordinates come ONLY from the facts provided.
   Never add a city, state, country, or any detail that isn't in them.
 - You may name ONE signature work by title. No years, quotes, or awards.
-- If a fact is missing, say so in character ("the record books go quiet
-  here"). Never fill the gap.
+- missingFacts lists the only facts that are missing. If it is "none",
+  never mention a gap, a mystery, or anything unknown. If a fact is
+  listed, say so once, in character. Never fill the gap.
+- State the death date plainly ("died on ..."). No figures of speech for
+  the death itself (final scene, last curtain, final page).
 - Celebrate their work. Never mock, joke about, or describe how they died.
 - Keep it spooky, not gory. No graphic violence.
 - If you're unsure about anything, leave it out.
 - Never describe the grave site today, visitors, or what happens there now.
 - No present-day claims. Don't say what is true today, now, or still;
   speak only about the facts as recorded.
-- Hard limit: 80 words for text. No filler about missing facts unless a
-  fact is actually missing.`;
+- Hard limit: 80 words for text.`;
 
 // Same order as the original prompt (voice → rules → format → example), so Mortimer's prompt is unchanged
 export function buildSystemPrompt(persona: Persona): string {

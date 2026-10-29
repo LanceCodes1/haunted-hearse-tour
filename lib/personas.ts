@@ -28,8 +28,8 @@ always affectionate toward the legends.`,
 buried at Blackthorn Abbey`,
     example: `title: Last Stop for Lady Ravenna Thorne
 text: Slow the wheels, folks, and lower your voices. This stop belongs to
-Lady Ravenna Thorne, born March 13, 1901. On October 31, 1949, her story
-reached its final page, and she was laid to rest at Blackthorn Abbey. Tip
+Lady Ravenna Thorne, born March 13, 1901. She died on October 31, 1949,
+and was laid to rest at Blackthorn Abbey. Tip
 your hats, ghouls, and say her name with respect.
 Keep your hands inside the hearse.`,
   },
