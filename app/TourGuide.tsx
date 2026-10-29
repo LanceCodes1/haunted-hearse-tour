@@ -10,6 +10,17 @@ import TourStopCard, { ENTRANCE_EVENT, type TourStop } from "./TourStopCard";
 export type TourName = { id: string; name: string; group: "LA Legends" | "Beyond LA"; tagline: string };
 export type NarratorOption = { id: Persona; label: string }; // just a name for the button, never the prompt
 
+const WARMING_UP = "The hearse is warming up…"; // narrator-neutral: any of the three voices may be driving
+
+// Phones only: a one-line status right where you tapped, instead of an overlay that covers the page
+function PhoneLoadingStatus() {
+  return (
+    <p role="status" aria-live="polite" className="eerie-pulse px-2 text-center font-display text-xl tracking-wide text-blood md:hidden">
+      {WARMING_UP}
+    </p>
+  );
+}
+
 export default function TourGuide({
   tour,
   living,
@@ -25,6 +36,7 @@ export default function TourGuide({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stop, setStop] = useState<TourStop | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingFrom, setLoadingFrom] = useState<"list" | "search">("list"); // where the phone status line shows
   const [query, setQuery] = useState("");
   const [searchMessage, setSearchMessage] = useState<string | null>(null);
   const [matches, setMatches] = useState<TourName[]>([]);
@@ -60,13 +72,14 @@ export default function TourGuide({
       setStop(null); // rejected search: clear the old card so only the message shows
       setSelectedId(null);
     }
-    if ("open" in result) visit(result.open);
+    if ("open" in result) visit(result.open, "search");
   }
 
   // The main path: a click or search picks a legend → ask our server → show the card (or a friendly error)
-  async function visit(id: string) {
+  async function visit(id: string, from: "list" | "search") {
     setMatches([]);
     setSelectedId(id);
+    setLoadingFrom(from);
     setStop(null);
     setLoading(true); // buttons are disabled while loading, so only one AI call runs at a time
     try {
@@ -138,7 +151,7 @@ export default function TourGuide({
                   <button
                     key={legend.id}
                     type="button"
-                    onClick={() => visit(legend.id)}
+                    onClick={() => visit(legend.id, "search")}
                     disabled={loading}
                     className="rounded-full border border-rust/60 bg-tar/80 px-3 py-1 text-bone transition duration-200 hover:border-amber hover:shadow-[0_0_12px_rgba(242,169,59,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber motion-reduce:transition-none"
                   >
@@ -148,6 +161,7 @@ export default function TourGuide({
               </div>
             </div>
           )}
+          {loading && loadingFrom === "search" && <PhoneLoadingStatus />}
         </form>
 
         {/* AI Tour Planner: shows the narrator picked above instead of a second picker */}
@@ -160,27 +174,23 @@ export default function TourGuide({
               {tour
                 .filter((legend) => legend.group === group)
                 .map((legend) => (
-                  <li key={legend.id} className="group relative">
+                  <li key={legend.id}>
                     <button
-                      onClick={() => visit(legend.id)}
+                      onClick={() => visit(legend.id, "list")}
                       disabled={loading}
-                      aria-describedby={`tip-${legend.id}`}
-                      className={`w-full rounded-2xl border px-4 py-2 text-left md:rounded-full transition duration-200 ease-out hover:-translate-y-0.5 hover:border-amber hover:shadow-[0_0_16px_rgba(242,169,59,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+                      className={`w-full rounded-2xl border px-4 py-2 text-left transition duration-200 ease-out hover:border-amber hover:shadow-[0_0_16px_rgba(242,169,59,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:shadow-[0_0_16px_rgba(242,169,59,0.45)] disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none ${
                         legend.id === selectedId ? "border-blood bg-blood text-bone" : "border-rust/60 bg-tar/80 text-bone"
                       }`}
                     >
                       {legend.name}
-                      {/* Phones have no hover, so the tagline shows right inside the button */}
-                      <span className="block text-xs text-bone/60 md:hidden">{legend.tagline}</span>
+                      {/* Tagline always visible under the name (every screen size), so nothing pops up or overlaps */}
+                      <span className="block text-xs text-bone/60">{legend.tagline}</span>
                     </button>
-                    {/* Ghost tooltip (tablet/desktop): fades in on hover or keyboard focus, never blocks a click */}
-                    <span
-                      id={`tip-${legend.id}`}
-                      role="tooltip"
-                      className="pointer-events-none absolute bottom-full hidden md:block left-2 right-2 z-20 mb-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-sm text-bone opacity-0 shadow-[0_0_20px_rgba(232,220,196,0.25)] backdrop-blur-md transition-opacity duration-300 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
-                    >
-                      {legend.tagline}
-                    </span>
+                    {loading && loadingFrom === "list" && legend.id === selectedId && (
+                      <div className="mt-2">
+                        <PhoneLoadingStatus />
+                      </div>
+                    )}
                   </li>
                 ))}
             </ul>
@@ -192,15 +202,16 @@ export default function TourGuide({
       {/* On phones, the intro panel moves above the legend list; cards stay below it */}
       <section className={`min-h-64 ${!selectedId ? "order-first md:order-none" : ""}`}>
         {!selectedId && <IntroPanel />}
-        {/* Loading overlay: fixed and vertically centered over a dimmed page, visible wherever you've scrolled */}
+        {/* Loading overlay (tablet/desktop only; phones get PhoneLoadingStatus where they tapped):
+            fixed and vertically centered over a dimmed page, visible wherever you've scrolled */}
         {loading && (
-          <div role="status" aria-live="polite" className="fixed inset-0 z-[1000] bg-tar/30">
-            {/* Phones: full width. Wider screens: only over the card column, matching the page layout
+          <div role="status" aria-live="polite" className="fixed inset-0 z-[1000] hidden bg-tar/30 md:block">
+            {/* Only over the card column, matching the page layout
                 (side gap + 1.5rem padding + 16rem list + 2rem gap), so it never covers the legend list */}
             <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-center px-6 md:left-[calc((100vw-min(100vw,64rem))/2+19.5rem)] md:right-[calc((100vw-min(100vw,64rem))/2+1.5rem)]">
               {/* Soft dark glow behind the letters (a filter, so it doesn't fight the pulse's red glow) */}
               <p className="eerie-pulse text-center font-display text-4xl tracking-wide text-blood drop-shadow-[0_0_10px_rgba(0,0,0,0.95)] lg:text-5xl">
-                Mortimer is warming up the hearse…
+                {WARMING_UP}
               </p>
             </div>
           </div>

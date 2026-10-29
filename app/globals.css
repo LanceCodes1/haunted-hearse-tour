@@ -25,21 +25,21 @@ body {
   color: var(--foreground);
 }
 
-/* Title flicker: a dying neon sign. One 15s cycle shared with the lightning: the title stutters in the
-   first 2.5s (same two bursts and speed as before), then the lightning strikes about 3s later (at 5.4s) */
+/* Title flicker: a dying neon sign. One 25s cycle shared with the lightning: the title stutters in the
+   first 2.5s (same two bursts and speed as before), the lightning strikes about 3s later (at 5.4s), then calm */
 @keyframes flicker {
-  0%, 1%, 2.6%, 3.8%, 15%, 16.6%, 100% {
+  0%, 0.6%, 1.56%, 2.28%, 9%, 9.96%, 100% {
     opacity: 1;
     text-shadow: 0 0 6px #ff2a2a, 0 0 18px #a8121f, 0 0 32px #a8121f;
   }
-  1.8%, 3.4%, 15.8% {
+  1.08%, 2.04%, 9.48% {
     opacity: 0.55;
     text-shadow: none;
   }
 }
 
 .title-flicker {
-  animation: flicker 15s infinite;
+  animation: flicker 25s infinite;
 }
 
 /* Loading text: a slow, eerie breathing glow */
@@ -74,34 +74,34 @@ body {
   animation: hearse-bounce 1.2s ease-in-out infinite;
 }
 
-/* Lightning: same 15s cycle as the title flicker, one soft sky glow at 5.4s, about 3s after the flicker ends.
-   Top of the screen only, fading to nothing further down; 1 glow per 15s is far under the 3-per-second safety limit */
+/* Lightning: same 25s cycle as the title flicker, one soft sky glow at 5.4s, about 3s after the flicker ends.
+   Quick rise (0.12s), slow fade (1.5s), top of the screen only; 1 strike per 25s is far under the 3-per-second limit */
 @keyframes lightning {
-  0%, 36%, 39.6%, 100% {
+  0%, 21.6%, 28.08%, 100% {
     opacity: 0;
   }
-  36.8% {
+  22.08% {
     opacity: 0.08;
   }
 }
 
 .lightning {
   background: linear-gradient(to bottom, #dce8ff, transparent);
-  animation: lightning 15s infinite;
+  animation: lightning 25s infinite;
 }
 
-/* Lightning bolt: draws itself downward (36% → 36.8%, about 0.1s), then fades with the sky glow.
+/* Lightning bolt: draws itself downward (21.6% → 22.08%, about 0.1s), then fades slowly with the sky glow.
    Thin and small, so it's a shape on screen, not a full-screen flash */
 @keyframes lightning-bolt {
-  0%, 36% {
+  0%, 21.6% {
     opacity: 0;
     stroke-dashoffset: 1;
   }
-  36.8% {
+  22.08% {
     opacity: 0.85;
     stroke-dashoffset: 0;
   }
-  39.6%, 100% {
+  28.08%, 100% {
     opacity: 0;
     stroke-dashoffset: 0;
   }
@@ -109,7 +109,7 @@ body {
 
 .lightning-bolt {
   stroke-dasharray: 1; /* with pathLength="1": a dash as long as the bolt, so moving it "draws" the line */
-  animation: lightning-bolt 15s infinite;
+  animation: lightning-bolt 25s infinite;
 }
 
 /* Respect users who ask for less motion: no flicker, no pulse, no bounce, no lightning */

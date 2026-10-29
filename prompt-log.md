@@ -1029,3 +1029,14 @@ Keep each phase small enough for one commit.
 - Bounce, drip, glow brightness, bolt shape, click-through, and Reduce motion unchanged; SiteTitle comment updated from 6s to 15s.
 **Verified:** lint + build passed; Lance checked the timing locally. The motion pack itself passed on the phone preview.
 **Mistake caught:** none
+
+### 2026-10-28 — Should: overlap fixes + 25s storm cycle
+**Tool:** Claude Code
+**Prompt:** "Then the next Should step: fix two overlap issues. (1) The legend tooltips (LA Legends and Beyond LA) overlap the names above or below them on hover. Make them expand inside the list item and push neighbors down instead of floating over them. (2) On phones, the "warming up the hearse" loading overlay covers the names and buttons. Fix the layout so nothing important is hidden, and make the text narrator-neutral ("The hearse is warming up…"). Show the plan and stop" / "Change to the lightning: make the full cycle 25 seconds instead of 15. The title flicker is at the start, then about 3 seconds later one strike, with the bolt and sky glow together, fading slowly together. Then calm until the next cycle. Park "random 20–30s lightning interval" in parked.md. Also from before: drop the expanding tooltip. Taglines are always visible, small and subtle, under each name, like on phones. Hover and focus = a soft glow ring only, no size change. Keep the phone status-line fix and the neutral loading text. Show the diff, save, run lint and build, then hand me the tests."
+**Why:** Hover tooltips covered neighboring names, the phone loading overlay hid the whole page, and a 15s storm still felt busy.
+**Result:**
+- Taglines always visible under each name on every screen size; hover/focus adds only an amber glow (no lift, no size change). The expanding tooltip was built, then dropped for this simpler version.
+- Phones: no overlay; "The hearse is warming up…" shows under the tapped name or the search box. Desktop keeps the card-column message. All loading text is narrator-neutral.
+- One 25s cycle: flicker in the first 2.5s, bolt + sky glow strike together at 5.4s (0.12s rise, 1.5s fade), then calm. Random 20–30s interval parked under Should.
+**Verified:** lint + build passed. Lance's 9 tests passed, including on his phone: storm timing, taglines and glow on desktop, keyboard focus, phone status line (list and search), card scroll, desktop loading message. Reduce motion handled in CSS; not retested by hand (couldn't find the setting). No noticeable page jump on the phone.
+**Mistake caught:** The bolt and sky glow ran on different timings, so the bolt flashed twice per glow; I caught it by watching, and they now strike together.
