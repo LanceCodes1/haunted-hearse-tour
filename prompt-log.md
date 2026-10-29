@@ -1008,3 +1008,14 @@ Keep each phase small enough for one commit.
 - Live Lugosi (Mortimer): "He died on August 16, 1956, and was laid to rest at Holy Cross Cemetery." 53 words, no gap line, no figure of speech for the death.
 **Verified:** gh commit status = success; live /api/narrate read in full, plus a word search for gap phrases (none).
 **Mistake caught:** I told Lance PR #2 would carry the later commits, but he merged it at 1 commit; the rest needed PR #3.
+
+### 2026-10-28 — Should: motion pack + "Plan a tour" invite
+**Tool:** Claude Code
+**Prompt:** "Next: a Should "motion pack." (1) The hearse image gently bounces like it's driving. (2) The far-left blood drip runs longer, keeping the short/long/medium pattern. (3) A soft lightning flash on the same cycle as the title flicker. All three respect prefers-reduced-motion and stay photosensitivity-safe. One commit; test on the preview before merging. Propose the plan and stop." / Follow-ups: flash half as bright plus a jagged bolt; park thunder; a "Want your own? Plan a tour →" invite on the tour page that jumps to the planner (#plan); then sky-only glow and a branching bolt.
+**Why:** Make the hearse feel alive and the storm feel real, and give share-link visitors a clear way to plan their own tour.
+**Result:**
+- Hearse bobs 3px with a 0.4° tilt every 1.2s; far-left drip extended 60 units (tip y≈93 → ≈153) with its highlights moved.
+- Lightning: a faint pale-blue glow over the top 45% of the screen plus a bolt (main channel + 4 forks) that draws top-down, once per 6s, at the moment the title dims. Mounted with the title so they stay in sync; never blocks clicks; hidden under Reduce motion.
+- Tour page: "Want your own? Plan a tour →" pill links to /#plan (the planner section's new id). Thunder with an off-by-default toggle parked under Should.
+**Verified:** lint + build passed after each change. Lance's local tests passed: bounce, drip, clicks during the flash, sky-only glow, branching bolt, pill lands on the planner. Reduce motion handled in CSS; not retested by hand after the sky-glow change. ✕ already showed for text or a route (no change needed).
+**Mistake caught:** The first full-screen flash read as a screen glitch, so it became a sky-only glow. Correction to the previous entry: PR #2 merged before the later pushes arrived; nobody made a mistake.

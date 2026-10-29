@@ -25,7 +25,7 @@ export default function IntroPanel() {
         width={2172}
         height={724}
         sizes="(min-width: 768px) 576px, 100vw"
-        className="-mt-6 h-auto w-full px-4"
+        className="hearse-bounce -mt-6 h-auto w-full px-4"
       />
 
       <div className="flex flex-col gap-4 p-6 pt-2 text-center">

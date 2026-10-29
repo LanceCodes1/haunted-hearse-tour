@@ -59,10 +59,68 @@ body {
   animation: eerie-pulse 2.8s ease-in-out infinite;
 }
 
-/* Respect users who ask for less motion: no flicker, no pulse, no lift */
+/* Hearse bounce: a small rise and tilt, like it's rolling down a bumpy road */
+@keyframes hearse-bounce {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.4deg);
+  }
+}
+
+.hearse-bounce {
+  animation: hearse-bounce 1.2s ease-in-out infinite;
+}
+
+/* Lightning: same 6s cycle as the title flicker, one soft sky glow as the title dims at 55%.
+   Top of the screen only, fading to nothing further down; 1 glow per 6s is far under the 3-per-second safety limit */
+@keyframes lightning {
+  0%, 53%, 62%, 100% {
+    opacity: 0;
+  }
+  55% {
+    opacity: 0.08;
+  }
+}
+
+.lightning {
+  background: linear-gradient(to bottom, #dce8ff, transparent);
+  animation: lightning 6s infinite;
+}
+
+/* Lightning bolt: draws itself downward (53% → 55%, about 0.1s), then fades with the flash.
+   Thin and small, so it's a shape on screen, not a full-screen flash */
+@keyframes lightning-bolt {
+  0%, 53% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+  55% {
+    opacity: 0.85;
+    stroke-dashoffset: 0;
+  }
+  62%, 100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+.lightning-bolt {
+  stroke-dasharray: 1; /* with pathLength="1": a dash as long as the bolt, so moving it "draws" the line */
+  animation: lightning-bolt 6s infinite;
+}
+
+/* Respect users who ask for less motion: no flicker, no pulse, no bounce, no lightning */
 @media (prefers-reduced-motion: reduce) {
   .title-flicker,
-  .eerie-pulse {
+  .eerie-pulse,
+  .hearse-bounce {
     animation: none;
+  }
+
+  .lightning,
+  .lightning-bolt {
+    display: none;
   }
 }
