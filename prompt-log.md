@@ -986,3 +986,14 @@ Keep each phase small enough for one commit.
 - Parked "Filler line" and "Neutral missing-fact phrase" marked done.
 **Verified:** lint + build passed. 9 local narrations: Lugosi ×2 in each voice had no gap line and a plain death date; Vincent Price in each voice admitted the missing grave once; all 50–73 words; Elvira still rejected.
 **Mistake caught:** Historian run 1 added "the Hungarian-born actor" (not in the facts); Kid runs still use present-day "still" lines and repeat "resting." Handled in the next persona-only step.
+
+### 2026-10-28 — Persona follow-up (reverted) + parked narration issues
+**Tool:** Claude Code
+**Prompt:** "Then, a time-boxed follow-up step, persona text only, no change to shared RULES: (1) Historian: add to its voice "never add birthplaces, nationalities, or details beyond the given facts; speak only in the past tense, no 'still,' 'remains,' or 'to this day.'" Make sure its example models that. (2) Kid-Friendly: rewrite its example so "resting" appears once, and nothing is in the present tense besides "is resting." Run the IDENTICAL check to prove Mortimer didn't change. Then test Lugosi twice each in Historian and Kid. Show me those 4 narrations in full and stop." / "Stop. Don't commit the persona follow-up. It made the Historian worse (it added "1931"). Revert lib/personas.ts to the last commit (the narration honesty fix)… park three items in parked.md… Commit only parked.md and push."
+**Why:** Try a persona-only fix for the Historian's added details and the Kid's repetition without touching the shared RULES.
+**Result:**
+- Mortimer's full system prompt was byte-for-byte IDENTICAL before and after (1,854 chars, same SHA-256).
+- Historian dropped "Hungarian-born" but said "the 1931 film Dracula" in 2/2 runs and still used present tense; Kid still said "is resting. He rests at…" in 2/2 runs and "still gives fans goosebumps" once.
+- Reverted `lib/personas.ts` to a28c0de (never committed); parked 3 items (Historian extra details + present tense, Kid repetition needs a known-grave example, Kid "still" claims).
+**Verified:** git status clean after the revert; a28c0de matches on GitHub; parking commit 2f24d67 pushed; dev server stopped. lint + build not run (no code shipped).
+**Mistake caught:** The follow-up made the Historian invent "1931," so I reverted it instead of shipping it. Claude Code committed the parking change (2f24d67), and the honesty fix (a28c0de), without proposing the commit message first.
