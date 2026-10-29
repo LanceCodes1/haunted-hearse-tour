@@ -38,6 +38,9 @@ Ideas and fixes saved for later. Not in this week's build.
 - Floating ghost button with tour categories (Should, after Musts).
 - Review skipDangerousModePermissionPrompt in ~/.claude/settings.json after the gate.
 - **Editable tour name:** the saved name is the AI's title; let the creator change it before saving.
+- **Historian adds details not in the facts and uses present tense:** "the Hungarian-born actor," "the 1931 film Dracula," "stands as a cornerstone," "is buried at." A persona-only fix (voice rule + past-tense example) removed the birthplace but added the film year in 2/2 runs, so it was reverted.
+- **Kid "is resting. He rests at…" repetition:** the Kid example only shows a missing grave; it needs a known-grave version that says both in one sentence.
+- **Kid occasional "still" claims:** e.g. "still gives fans goosebumps," "still makes shadows dance."
 
 ## Showcase (weekend)
 
