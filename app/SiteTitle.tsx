@@ -17,7 +17,7 @@ export default function SiteTitle({ href }: { href?: string }) {
   const className = "rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber";
   return (
     <>
-      {/* Mounted with the title so the 15s flicker and lightning start together and stay in sync on every page.
+      {/* Mounted with the title so the 25s flicker and lightning start together and stay in sync on every page.
           Above the map (Leaflet uses z-index up to 1000) but never blocks clicks */}
       <div aria-hidden="true" className="lightning pointer-events-none fixed inset-x-0 top-0 z-[2000] h-[45vh] opacity-0" />
       {/* A branching bolt: one main channel plus 4 thinner forks, drawn top-down through the sky glow */}

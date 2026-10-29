@@ -9,6 +9,7 @@ Ideas and fixes saved for later. Not in this week's build.
 - **Flickering back-arrow** next to the site title, same style and flicker as the title, with a subtle "back" hint. Keep the text button too.
 - **Longer blood drips:** extend the edge drips (left and right ends, second-to-end) about half an inch, and the drip under "HEARSE" a bit. Keep the alternating short/long/medium pattern. (far-left drip done in the motion pack; the right end, the second-to-end drips, and the drip under "HEARSE" are still to do)
 - **Thunder sound with an off-by-default toggle:** a Web Audio rumble timed to the lightning flash. It only starts after the visitor turns Sound on (browser autoplay rule), and the choice is remembered.
+- **Random 20–30s lightning interval:** strike at an unpredictable moment each cycle instead of a fixed 25s (needs a little JavaScript, since CSS animations repeat on a fixed timer).
 
 ## Later
 
